@@ -1,26 +1,27 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {useState} from 'react';
 import './App.css';
+import {LevelSelector} from "./components/levelSelector/LevelSelector";
+import {Game, gameFactory} from "./domain/game";
+import {EventPublisher} from "./domain/events/events";
 
 const App: React.FC = () => {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+    const [game, setGame] = useState<Game>();
+
+    const eventPublisher: EventPublisher = {
+        publish: (event) => {
+            if(Game.events.created.isTypeOf(event)) {
+                setGame(event.payload);
+            }
+        }
+    };
+
+    const createGame = gameFactory(eventPublisher);
+
+    return (
+      <div className="App">
+          {!game && <LevelSelector onSelect={(gameLevel) => createGame(gameLevel)}/>}
+      </div>
+    );
+};
 
 export default App;
