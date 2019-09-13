@@ -20,34 +20,35 @@ const gameLevelSettings = (gameLevel: GameLevel): GameLevelSettings => {
     switch (gameLevel) {
         case GameLevel.EASY:
             return {
-                mineProbability: 20,
+                mineProbability: 0.2,
                 boardSize: {width: 6, height: 9}
             };
         case GameLevel.MEDIUM:
             return {
-                mineProbability: 25,
+                mineProbability: 0.25,
                 boardSize: {width: 9, height: 12}
             };
         case GameLevel.HARD:
             return {
-                mineProbability: 30,
+                mineProbability: 0.30,
                 boardSize: {width: 12, height: 15}
             };
     }
 };
+
+const range = (size: number) => Array.from({length: size}, (_, index) => index);
 
 export class Game {
     static events = {
         created: eventCreator<Game>('GAME_CREATED'),
         started: eventCreator<Game>('GAME_STARTED')
     };
-
     private readonly eventPublisher: EventPublisher;
+
     private readonly mineFactory: MineFactory;
     public readonly gameLevel: GameLevel;
     private readonly gameLevelSettings: GameLevelSettings;
     public readonly board?: GameBoard;
-
     constructor(eventPublisher: EventPublisher, mineFactory: MineFactory,
                 gameLevel: GameLevel, board?: GameBoard) {
         this.eventPublisher = eventPublisher;
@@ -61,7 +62,27 @@ export class Game {
         }
     }
 
-    public startGame(position: Position): Game {
+    public getBoardSize() {
+        return this.gameLevelSettings.boardSize;
+    }
+
+    public boardTotalPositions() {
+        return this.getBoardSize().width * this.getBoardSize().height;
+    }
+
+    public boardPositions() {
+        return range(this.boardTotalPositions())
+            .map((index) => Position.of({
+                x: index % this.getBoardSize().width,
+                y: Math.trunc(index / this.getBoardSize().width)
+            }));
+    }
+
+    public revealPosition(position: Position): Game {
+        return this.startGame(position);
+    }
+
+    private startGame(position: Position) {
         const board = this.createBoard(position);
         const startedGame = new Game(this.eventPublisher, this.mineFactory, this.gameLevel, board);
 
@@ -71,7 +92,7 @@ export class Game {
 
     private createBoard(position: Position) {
         const mineCreator = this.mineFactory(position, this.gameLevelSettings.mineProbability);
-        return createGameBoard(mineCreator)(this.gameLevelSettings.boardSize);
+        return createGameBoard(mineCreator)(this.getBoardSize());
     }
 
     private publishEvent(event: Event<Game>) {

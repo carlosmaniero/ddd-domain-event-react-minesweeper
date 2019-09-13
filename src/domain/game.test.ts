@@ -28,7 +28,7 @@ describe('Game', () => {
             mineFactory.mockReturnValue(() => MineType.Mine);
 
             const game = createGame(GameLevel.EASY);
-            const startedGame = game.startGame(Position.of({x: 0, y: 0}));
+            const startedGame = game.revealPosition(Position.of({x: 0, y: 0}));
 
             expect(publisher).toBeCalledTimes(2);
             expect(publisher).toBeCalledWith(Game.events.started(startedGame));
@@ -54,7 +54,7 @@ describe('Game', () => {
                 [mineType, mineType, mineType, mineType, mineType, mineType],
                 [mineType, mineType, mineType, mineType, mineType, mineType],
             ]);
-            const startedGame = game.startGame(Position.of({x: 0, y: 0}));
+            const startedGame = game.revealPosition(Position.of({x: 0, y: 0}));
 
             expect(startedGame.board).toEqual(expectedBoard);
         });
@@ -62,9 +62,9 @@ describe('Game', () => {
         describe('Game Level', () => {
             it.each`
                 probability | level
-                ${20} | ${GameLevel.EASY}
-                ${25} | ${GameLevel.MEDIUM}
-                ${30} | ${GameLevel.HARD}
+                ${0.2} | ${GameLevel.EASY}
+                ${0.25} | ${GameLevel.MEDIUM}
+                ${0.3} | ${GameLevel.HARD}
             `('mine factory probability is $probability for $level', ({probability, level}) => {
                 const {createGame, mineFactory} = createGameWithMockedDependencies();
                 mineFactory.mockReturnValue(() => MineType.Mine);
@@ -72,7 +72,7 @@ describe('Game', () => {
                 const game = createGame(level);
                 const initialPosition = Position.of({x: 0, y: 0});
 
-                game.startGame(initialPosition);
+                game.revealPosition(initialPosition);
 
                 expect(mineFactory).toBeCalledWith(initialPosition, probability);
             });
@@ -88,7 +88,7 @@ describe('Game', () => {
 
                 const game = createGame(level);
                 const initialPosition = Position.of({x: 0, y: 0});
-                const startedGame = game.startGame(initialPosition);
+                const startedGame = game.revealPosition(initialPosition);
                 const board = startedGame.board as GameBoard;
 
                 expect(board.getWidth()).toEqual(width);
