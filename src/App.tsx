@@ -2,18 +2,14 @@ import React, {useState} from 'react';
 import './App.css';
 import {LevelSelector} from "./components/levelSelector/LevelSelector";
 import {Game, gameFactory} from "./domain/game";
-import {EventPublisher} from "./domain/events/events";
+import {EventPublisher, eventPublisherBuilder} from "./domain/events/events";
 
 const App: React.FC = () => {
     const [game, setGame] = useState<Game>();
 
-    const eventPublisher: EventPublisher = {
-        publish: (event) => {
-            if(Game.events.created.isTypeOf(event)) {
-                setGame(event.payload);
-            }
-        }
-    };
+    const eventPublisher: EventPublisher = eventPublisherBuilder()
+        .listen(Game.events.created, setGame)
+        .build();
 
     const createGame = gameFactory(eventPublisher);
 
