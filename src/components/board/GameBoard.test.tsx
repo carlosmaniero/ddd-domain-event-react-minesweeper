@@ -4,6 +4,7 @@ import {gameFactory, GameLevel} from "../../domain/game";
 import {eventPublisherBuilder} from "../../domain/events/events";
 import React from "react";
 import {Position} from "../../domain/position/position";
+import {MineType} from "../../domain/board/mine";
 
 describe('GameBoard', () => {
 
@@ -28,5 +29,23 @@ describe('GameBoard', () => {
         fireEvent.click(getByLabelText('Position 6x9'));
 
         expect(startGameSpy).toBeCalledWith(Position.of({x: 5, y: 8}));
+    });
+
+    it('revels the selected position without bombs', () => {
+        const game = gameFactory(eventPublisherBuilder().build(), () => () => MineType.NotMine)(GameLevel.EASY);
+        const gameWithRevealedPosition = game.revealPosition(Position.of({x: 5, y: 8}));
+        const {queryByLabelText} = render(<GameBoard game={gameWithRevealedPosition}/>);
+
+        expect(queryByLabelText('Position 6x9 reveled with no bomb near'))
+            .not.toBeNull();
+    });
+
+    it('revels the selected position with bombs', () => {
+        const game = gameFactory(eventPublisherBuilder().build(), () => () => MineType.Mine)(GameLevel.EASY);
+        const gameWithRevealedPosition = game.revealPosition(Position.of({x: 2, y: 2}));
+        const {getByLabelText} = render(<GameBoard game={gameWithRevealedPosition}/>);
+
+        const revealedPosition = getByLabelText('Position 3x3 reveled with 8 bombs near');
+        expect(revealedPosition.innerHTML).toBe('8');
     });
 });

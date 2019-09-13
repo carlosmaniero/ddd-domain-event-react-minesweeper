@@ -26,7 +26,7 @@ type BoardPositionRevealedWithBombNear = {
     position: Position
 };
 
-type REVEALED_WITH_NO_BOMB_NEAR = {
+type BoardPositionWithNoBombNear = {
     type: 'REVEALED_WITH_NO_BOMB_NEAR',
     position: Position
 };
@@ -34,7 +34,17 @@ type REVEALED_WITH_NO_BOMB_NEAR = {
 export type BoardPosition =
     BoardPositionNotRevealed
     | BoardPositionRevealedWithBombNear
-    | REVEALED_WITH_NO_BOMB_NEAR;
+    | BoardPositionWithNoBombNear;
+
+
+export const isRevealedWithNoBombNear = (boardPosition: BoardPosition): boardPosition is BoardPositionWithNoBombNear =>
+    boardPosition.type === 'REVEALED_WITH_NO_BOMB_NEAR';
+
+export const isRevealedWithBombsNear = (boardPosition: BoardPosition): boardPosition is BoardPositionRevealedWithBombNear =>
+    boardPosition.type === 'REVEALED_WITH_BOMB_NEAR';
+
+export const isRevealed = (boardPosition: BoardPosition) =>
+    isRevealedWithBombsNear(boardPosition) || isRevealedWithNoBombNear(boardPosition)
 
 export class Game {
     static events = {

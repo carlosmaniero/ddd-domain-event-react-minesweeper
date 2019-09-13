@@ -10,6 +10,8 @@ import {LevelButton} from "../components/levelSelector/LevelButton";
 import {gameFactory, GameLevel} from "../domain/game";
 import {LevelSelector} from "../components/levelSelector/LevelSelector";
 import {GameBoard} from "../components/board/GameBoard";
+import {MineType} from "../domain/board/mine";
+import {Position} from "../domain/position/position";
 
 storiesOf('Welcome', module).add('to Storybook', () => <Welcome showApp={linkTo('Button')} />);
 
@@ -31,4 +33,14 @@ const eventPublisherLog = {
 storiesOf('Game Board', module)
     .add(`New Game - Easy`, () => <GameBoard game={gameFactory(eventPublisherLog)(GameLevel.EASY)} />)
     .add(`New Game - Medium`, () => <GameBoard game={gameFactory(eventPublisherLog)(GameLevel.MEDIUM)} />)
-    .add(`New Game - Hard`, () => <GameBoard game={gameFactory(eventPublisherLog)(GameLevel.HARD)} />);
+    .add(`New Game - Hard`, () => <GameBoard game={gameFactory(eventPublisherLog)(GameLevel.HARD)} />)
+    .add(`Game - Started no mine`, () => {
+        const game = gameFactory(eventPublisherLog, () => () => MineType.NotMine)(GameLevel.EASY)
+            .revealPosition(Position.of({x: 2, y: 2}));
+        return <GameBoard game={game} />
+    })
+    .add(`Game - Started mine`, () => {
+        const game = gameFactory(eventPublisherLog, () => () => MineType.Mine)(GameLevel.EASY)
+            .revealPosition(Position.of({x: 2, y: 2}));
+        return <GameBoard game={game} />
+    });
