@@ -96,4 +96,37 @@ describe('Game', () => {
             });
         });
     });
+
+    describe('revealing a position', () => {
+        it('Revel a position with no mine near', () => {
+            const {createGame, mineFactory} = createGameWithMockedDependencies();
+            mineFactory.mockReturnValue(() => MineType.NotMine);
+
+            const revealedPosition = Position.of({x: 1, y: 2});
+            const game = createGame(GameLevel.EASY);
+            const startedGame = game.revealPosition(revealedPosition);
+
+            const position = startedGame.boardPositions()[13];
+            expect(position).toEqual({
+                type: 'REVEALED_WITH_NO_BOMB_NEAR',
+                position: revealedPosition
+            });
+        });
+
+        it('revel a position with mine near', () => {
+            const {createGame, mineFactory} = createGameWithMockedDependencies();
+            mineFactory.mockReturnValue(() => MineType.Mine);
+
+            const revealedPosition = Position.of({x: 1, y: 2});
+            const game = createGame(GameLevel.EASY);
+            const startedGame = game.revealPosition(revealedPosition);
+            const position = startedGame.boardPositions()[13];
+
+            expect(position).toEqual({
+                type: 'REVEALED_WITH_BOMB_NEAR',
+                position: revealedPosition,
+                bombCount: 8
+            });
+        });
+    });
 });

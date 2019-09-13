@@ -11,7 +11,7 @@ export type MineCreator = (position: Position) => MineType;
 export type MineFactory = (initialPosition: Position, probability: number, numberGenerator?: NumberGenerator) => MineCreator
 
 export const mineCreatorFactory: MineFactory = (initialPosition: Position, probability: number, numberGenerator: NumberGenerator = Math.random): MineCreator => {
-    const isInitialPosition = (position: Position) => position.x === initialPosition.x && position.y === initialPosition.y;
+    const isInitialPosition = (position: Position) => position.sameOf(initialPosition);
     const attendToProbability = () => numberGenerator() <= probability;
     const isMine = (position: Position) => !isInitialPosition(position) && attendToProbability();
 

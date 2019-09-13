@@ -11,10 +11,22 @@ export class GameBoard {
         this.board = board;
     }
 
-    bombCount(position: Position) {
+    public bombCount(position: Position) {
         return this.getAdjacent(position)
             .filter(mineType => mineType === MineType.Mine)
             .length;
+    }
+
+    public hasBomb(position: Position) {
+        return this.bombCount(position) > 0;
+    }
+
+    public getWidth() {
+        return this.board[0].length;
+    }
+
+    public getHeight() {
+        return this.board.length;
     }
 
     private getAdjacent(position: Position): MineType[] {
@@ -25,14 +37,6 @@ export class GameBoard {
     private getByPosition(position: Position): MineType {
         let boardElement = this.board[position.y];
         return boardElement ? boardElement[position.x] : MineType.NotMine;
-    }
-
-    public getWidth() {
-        return this.board[0].length;
-    }
-
-    public getHeight() {
-        return this.board.length;
     }
 }
 

@@ -3,6 +3,7 @@ import {Position} from './position/position'
 import {mineCreatorFactory, MineFactory} from "./board/mine";
 import {createGameBoard, GameBoard} from "./board/gameBoard";
 import {GameLevelSettings, gameLevelSettings} from "./settings";
+import {RevealedBoard} from "./board/RevealedBoard";
 
 export enum GameLevel {
     EASY = 'Easy',
@@ -40,18 +41,14 @@ export class Game {
         created: eventCreator<Game>('GAME_CREATED'),
         started: eventCreator<Game>('GAME_STARTED')
     };
-    private readonly eventPublisher: EventPublisher;
 
-    private readonly mineFactory: MineFactory;
-    public readonly gameLevel: GameLevel;
     private readonly gameLevelSettings: GameLevelSettings;
-    public readonly board?: GameBoard;
-    constructor(eventPublisher: EventPublisher, mineFactory: MineFactory,
-                gameLevel: GameLevel, board?: GameBoard) {
-        this.eventPublisher = eventPublisher;
-        this.mineFactory = mineFactory;
-        this.gameLevel = gameLevel;
-        this.board = board;
+
+    constructor(private readonly eventPublisher: EventPublisher,
+                private readonly mineFactory: MineFactory,
+                public readonly gameLevel: GameLevel,
+                private readonly revealedBoard: RevealedBoard = new RevealedBoard(),
+                public board?: GameBoard) {
         this.gameLevelSettings = gameLevelSettings(gameLevel);
 
         if (!this.board) {
@@ -69,26 +66,50 @@ export class Game {
 
     public boardPositions(): BoardPosition[] {
         return range(this.boardTotalPositions())
-            .map((index) => this.getPositionForPositionIndex(index));
+            .map((index) => this.getBoardPositionForPositionIndex(index));
     }
 
     public revealPosition(position: Position): Game {
         return this.startGame(position);
     }
 
-    private getPositionForPositionIndex(index: number): BoardPosition {
+    private getBoardPositionForPositionIndex(index: number): BoardPosition {
+        const position = Position.of({
+            x: index % this.getBoardSize().width,
+            y: Math.trunc(index / this.getBoardSize().width)
+        });
+
+        if (!this.revealedBoard.isRevealed(position) || !this.board) {
+            return {
+                type: 'NOT_REVEALED',
+                position: position
+            };
+        }
+
+        if (this.board.hasBomb(position)) {
+            return {
+                type: 'REVEALED_WITH_BOMB_NEAR',
+                position: position,
+                bombCount: this.board.bombCount(position)
+            };
+        }
+
         return {
-            type: 'NOT_REVEALED',
-            position: Position.of({
-                x: index % this.getBoardSize().width,
-                y: Math.trunc(index / this.getBoardSize().width)
-            })
+            type: 'REVEALED_WITH_NO_BOMB_NEAR',
+            position: position,
         };
     }
 
     private startGame(position: Position) {
         const board = this.createBoard(position);
-        const startedGame = new Game(this.eventPublisher, this.mineFactory, this.gameLevel, board);
+
+        const startedGame = new Game(
+            this.eventPublisher,
+            this.mineFactory,
+            this.gameLevel,
+            this.revealedBoard.reveal(position),
+            board
+        );
 
         this.publishEvent(Game.events.started(startedGame));
         return startedGame;

@@ -20,6 +20,10 @@ export class Position {
         ];
     }
 
+    public sameOf(otherPosition: Position) {
+        return this.x === otherPosition.x && this.y === otherPosition.y
+    }
+
     static of(position: {x: number, y: number}): Position {
         return new Position(position.x, position.y);
     }
