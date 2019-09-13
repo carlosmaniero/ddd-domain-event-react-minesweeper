@@ -21,4 +21,4 @@ Object.values(GameLevel).forEach((level) =>
     levelButtonStory.add(level, () =>  <LevelButton onClick={action('clicked')} level={level}/>));
 
 storiesOf('LevelSelector', module)
-    .add(`default`, () => <LevelSelector/>);
+    .add(`default`, () => <LevelSelector onSelect={action('selected')}/>);

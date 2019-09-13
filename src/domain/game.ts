@@ -9,6 +9,8 @@ export enum GameLevel {
     HARD = 'Hard',
 }
 
+export const getAllGameLevels = () => Object.values(GameLevel);
+
 interface GameLevelSettings {
     mineProbability: number;
     boardSize: BoardSize;

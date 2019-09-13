@@ -1,5 +1,5 @@
 import {LevelButton} from "./LevelButton";
-import {GameLevel} from "../../domain/game";
+import {GameLevel, getAllGameLevels} from "../../domain/game";
 import React from "react";
 import styled from "styled-components";
 
@@ -28,12 +28,15 @@ const LevelSelectorTitle = styled.h1`
   font-family: 'Open Sans', sans-serif;
 `;
 
-export const LevelSelector = () =>
+export interface LevelSelectorProps {
+    onSelect: (level: GameLevel) => void;
+}
+
+export const LevelSelector = ({onSelect}: LevelSelectorProps) =>
     <LevelSelectorSection>
         <LevelSelectorTitle>Choose the Game Level</LevelSelectorTitle>
         <LevelButtonSection>
-            <LevelButtonWithMargin level={GameLevel.EASY} onClick={() => null} />
-            <LevelButtonWithMargin level={GameLevel.MEDIUM} onClick={() => null} />
-            <LevelButtonWithMargin level={GameLevel.HARD} onClick={() => null} />
+            {getAllGameLevels().map((gameLevel) =>
+                <LevelButtonWithMargin key={gameLevel} level={gameLevel} onClick={() => onSelect(gameLevel)} />)}
         </LevelButtonSection>
     </LevelSelectorSection>;
