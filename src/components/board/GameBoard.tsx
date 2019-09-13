@@ -41,5 +41,5 @@ const positionToText = (position: Position) => (position.x + 1) + 'x' + (positio
 export const GameBoard = ({game}: GameBoardProps) =>
     <GameBoardGrid {...game.getBoardSize()}>
         {game.boardPositions()
-            .map((position, index) => <GamePosition game={game} position={position} key={index} />)}
+            .map((boardPosition, index) => <GamePosition game={game} position={boardPosition.position} key={index} />)}
     </GameBoardGrid>;

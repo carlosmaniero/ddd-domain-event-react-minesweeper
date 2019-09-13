@@ -1,7 +1,8 @@
-import {eventCreator, EventPublisher, Event} from "./events/events";
+import {Event, eventCreator, EventPublisher} from "./events/events";
 import {Position} from './position/position'
 import {mineCreatorFactory, MineFactory} from "./board/mine";
-import {BoardSize, createGameBoard, GameBoard} from "./board/gameBoard";
+import {createGameBoard, GameBoard} from "./board/gameBoard";
+import {GameLevelSettings, gameLevelSettings} from "./settings";
 
 export enum GameLevel {
     EASY = 'Easy',
@@ -11,32 +12,28 @@ export enum GameLevel {
 
 export const getAllGameLevels = () => Object.values(GameLevel);
 
-interface GameLevelSettings {
-    mineProbability: number;
-    boardSize: BoardSize;
-}
+const range = (size: number) => Array.from({length: size}, (_, index) => index);
 
-const gameLevelSettings = (gameLevel: GameLevel): GameLevelSettings => {
-    switch (gameLevel) {
-        case GameLevel.EASY:
-            return {
-                mineProbability: 0.2,
-                boardSize: {width: 6, height: 9}
-            };
-        case GameLevel.MEDIUM:
-            return {
-                mineProbability: 0.25,
-                boardSize: {width: 9, height: 12}
-            };
-        case GameLevel.HARD:
-            return {
-                mineProbability: 0.30,
-                boardSize: {width: 12, height: 15}
-            };
-    }
+type BoardPositionNotRevealed = {
+    type: 'NOT_REVEALED',
+    position: Position
 };
 
-const range = (size: number) => Array.from({length: size}, (_, index) => index);
+type BoardPositionRevealedWithBombNear = {
+    type: 'REVEALED_WITH_BOMB_NEAR',
+    bombCount: number,
+    position: Position
+};
+
+type REVEALED_WITH_NO_BOMB_NEAR = {
+    type: 'REVEALED_WITH_NO_BOMB_NEAR',
+    position: Position
+};
+
+export type BoardPosition =
+    BoardPositionNotRevealed
+    | BoardPositionRevealedWithBombNear
+    | REVEALED_WITH_NO_BOMB_NEAR;
 
 export class Game {
     static events = {
@@ -70,16 +67,23 @@ export class Game {
         return this.getBoardSize().width * this.getBoardSize().height;
     }
 
-    public boardPositions() {
+    public boardPositions(): BoardPosition[] {
         return range(this.boardTotalPositions())
-            .map((index) => Position.of({
-                x: index % this.getBoardSize().width,
-                y: Math.trunc(index / this.getBoardSize().width)
-            }));
+            .map((index) => this.getPositionForPositionIndex(index));
     }
 
     public revealPosition(position: Position): Game {
         return this.startGame(position);
+    }
+
+    private getPositionForPositionIndex(index: number): BoardPosition {
+        return {
+            type: 'NOT_REVEALED',
+            position: Position.of({
+                x: index % this.getBoardSize().width,
+                y: Math.trunc(index / this.getBoardSize().width)
+            })
+        };
     }
 
     private startGame(position: Position) {
