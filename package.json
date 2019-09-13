@@ -1,5 +1,5 @@
 {
-  "name": "tdd-react-minefield",
+  "name": "ddd-domain-event-react-minesweeper",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
