@@ -43,9 +43,11 @@ export const GamePositionElement = styled.button`
   color: ${textColor};
 `;
 
-interface GamePositionProps {
+export interface GamePositionProps {
     boardPosition: BoardPosition;
     onClick: () => void;
+    onMouseEnter: () => void;
+    className?: string;
 }
 
 const boardPositionAriaLabel = (boardPosition: BoardPosition) => {
@@ -70,9 +72,11 @@ const boardPositionText = (boardPosition: BoardPosition) => {
 
 const positionToText = (position: Position) => (position.x + 1) + 'x' + (position.y + 1);
 
-export const GamePositionButton = ({onClick, boardPosition}: GamePositionProps) =>
+export const GamePositionButton = ({onClick, onMouseEnter, boardPosition, className}: GamePositionProps) =>
     <GamePositionElement
         onClick={() => onClick()}
+        className={className}
+        onMouseEnter={() => onMouseEnter()}
         aria-label={boardPositionAriaLabel(boardPosition)}
         boardPosition={boardPosition}>
         {boardPositionText(boardPosition)}
