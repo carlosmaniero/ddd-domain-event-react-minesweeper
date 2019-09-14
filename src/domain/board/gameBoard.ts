@@ -17,6 +17,10 @@ export class GameBoard {
             .length;
     }
 
+    public isBomb(position: Position) {
+        return this.getByPosition(position) === MineType.Mine;
+    }
+
     public hasBombNear(position: Position) {
         return this.nearBombCount(position) > 0;
     }

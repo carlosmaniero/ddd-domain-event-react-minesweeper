@@ -20,11 +20,18 @@ export const getAllGameLevels = () => Object.values(GameLevel);
 
 const range = (size: number) => Array.from({length: size}, (_, index) => index);
 
+enum MinesweeperState {
+    NotStarted,
+    Started,
+    GameOver
+}
+
 export class Minesweeper {
     static events = {
         created: eventCreator<Minesweeper>('GAME_CREATED'),
         started: eventCreator<Minesweeper>('GAME_STARTED'),
-        revealed: eventCreator<Minesweeper>('GAME_REVEALED')
+        revealed: eventCreator<Minesweeper>('GAME_REVEALED'),
+        gameOver: eventCreator<Minesweeper>('GAME_OVER')
     };
 
     private readonly gameLevelSettings: GameLevelSettings;
@@ -33,7 +40,8 @@ export class Minesweeper {
                 private readonly mineFactory: MineFactory,
                 public readonly gameLevel: GameLevel,
                 private readonly revealedBoard: RevealedBoard = new RevealedBoard(),
-                public board?: GameBoard) {
+                public readonly board?: GameBoard,
+                private readonly state: MinesweeperState = MinesweeperState.NotStarted) {
         this.gameLevelSettings = gameLevelSettings(gameLevel);
 
         if (!this.isStarted()) {
@@ -56,12 +64,25 @@ export class Minesweeper {
     }
 
     public revealPosition(position: Position): Minesweeper {
+        if (this.isGameOver()) {
+            return this;
+        }
+
         if (!this.isStarted()) {
             return this.startGame(position);
         }
 
+        if (this.board.isBomb(position)) {
+            return this.gameOver();
+        }
+
         const reveledGame = new Minesweeper(
-            this.eventPublisher, this.mineFactory, this.gameLevel, this.revealedBoard.reveal(position), this.board);
+            this.eventPublisher,
+            this.mineFactory,
+            this.gameLevel,
+            this.revealedBoard.reveal(position),
+            this.board
+        );
 
         this.publishEvent(Minesweeper.events.revealed(reveledGame));
         return reveledGame;
@@ -110,18 +131,28 @@ export class Minesweeper {
         this.eventPublisher.publish(event);
     }
 
-    private isStarted() {
+    private isStarted(): this is { board: GameBoard } {
         return !!this.board;
     }
-}
 
-type MinesweeperConstructor = {
-    eventPublisher: EventPublisher,
-    mineFactory: MineFactory,
-    gameLevel: GameLevel,
-    revealedBoard: RevealedBoard,
-    board?: GameBoard
-};
+    private gameOver() {
+        const gameOverMinesweeper = new Minesweeper(
+            this.eventPublisher,
+            this.mineFactory,
+            this.gameLevel,
+            this.revealedBoard,
+            this.board,
+            MinesweeperState.GameOver
+        );
+
+        this.publishEvent(Minesweeper.events.gameOver(gameOverMinesweeper));
+        return gameOverMinesweeper;
+    }
+
+    isGameOver(): boolean {
+        return this.state === MinesweeperState.GameOver;
+    }
+}
 
 export type GameCreator = (gameLevel: GameLevel) => Minesweeper;
 
