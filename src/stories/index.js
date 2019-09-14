@@ -7,7 +7,7 @@ import {linkTo} from '@storybook/addon-links';
 import {Welcome} from '@storybook/react/demo';
 import {RegularButton} from "../components/designSystem/buttons/RegularButton";
 import {LevelButton} from "../components/levelSelector/LevelButton";
-import {gameFactory, GameLevel} from "../domain/game";
+import {gameFactory, GameLevel} from "../domain/minesweeper";
 import {LevelSelector} from "../components/levelSelector/LevelSelector";
 import {GameBoard} from "../components/board/GameBoard";
 import {MineType} from "../domain/board/mine";

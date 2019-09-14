@@ -1,4 +1,4 @@
-import {BoardPosition, Game, isRevealed, isRevealedWithBombsNear, isRevealedWithNoBombNear} from "../../domain/game";
+import {BoardPosition, Minesweeper, isRevealed, isRevealedWithBombsNear, isRevealedWithNoBombNear} from "../../domain/minesweeper";
 import styled from "styled-components";
 import React from "react";
 import {Position} from "../../domain/position/position";

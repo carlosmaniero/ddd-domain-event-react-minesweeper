@@ -1,11 +1,11 @@
-import {BoardPosition, Game, isRevealed, isRevealedWithBombsNear, isRevealedWithNoBombNear} from "../../domain/game";
+import {BoardPosition, Minesweeper, isRevealed, isRevealedWithBombsNear, isRevealedWithNoBombNear} from "../../domain/minesweeper";
 import React from "react";
 import styled from "styled-components";
 import {Position} from "../../domain/position/position";
 import {GamePositionButton} from "./GamePositionButton";
 
 export interface GameBoardProps {
-    game: Game
+    game: Minesweeper
 }
 
 interface GameBoardGridProps {

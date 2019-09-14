@@ -1,6 +1,6 @@
 import {GameBoard} from "./GameBoard";
 import {fireEvent, render} from "@testing-library/react";
-import {gameFactory, GameLevel} from "../../domain/game";
+import {gameFactory, GameLevel} from "../../domain/minesweeper";
 import {eventPublisherBuilder} from "../../domain/events/events";
 import React from "react";
 import {Position} from "../../domain/position/position";

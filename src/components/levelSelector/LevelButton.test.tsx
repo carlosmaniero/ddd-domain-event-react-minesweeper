@@ -1,7 +1,7 @@
 import {fireEvent, render} from "@testing-library/react";
 import React from "react";
 import {LevelButton} from "./LevelButton";
-import {GameLevel} from "../../domain/game";
+import {GameLevel} from "../../domain/minesweeper";
 
 describe('Level Button', () => {
 

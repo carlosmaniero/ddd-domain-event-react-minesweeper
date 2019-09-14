@@ -15,41 +15,11 @@ export const getAllGameLevels = () => Object.values(GameLevel);
 
 const range = (size: number) => Array.from({length: size}, (_, index) => index);
 
-type BoardPositionNotRevealed = {
-    type: 'NOT_REVEALED',
-    position: Position
-};
-
-type BoardPositionRevealedWithBombNear = {
-    type: 'REVEALED_WITH_BOMB_NEAR',
-    bombCount: number,
-    position: Position
-};
-
-type BoardPositionWithNoBombNear = {
-    type: 'REVEALED_WITH_NO_BOMB_NEAR',
-    position: Position
-};
-
-export type BoardPosition =
-    BoardPositionNotRevealed
-    | BoardPositionRevealedWithBombNear
-    | BoardPositionWithNoBombNear;
-
-
-export const isRevealedWithNoBombNear = (boardPosition: BoardPosition): boardPosition is BoardPositionWithNoBombNear =>
-    boardPosition.type === 'REVEALED_WITH_NO_BOMB_NEAR';
-
-export const isRevealedWithBombsNear = (boardPosition: BoardPosition): boardPosition is BoardPositionRevealedWithBombNear =>
-    boardPosition.type === 'REVEALED_WITH_BOMB_NEAR';
-
-export const isRevealed = (boardPosition: BoardPosition) =>
-    isRevealedWithBombsNear(boardPosition) || isRevealedWithNoBombNear(boardPosition)
-
-export class Game {
+export class Minesweeper {
     static events = {
-        created: eventCreator<Game>('GAME_CREATED'),
-        started: eventCreator<Game>('GAME_STARTED')
+        created: eventCreator<Minesweeper>('GAME_CREATED'),
+        started: eventCreator<Minesweeper>('GAME_STARTED'),
+        revealed: eventCreator<Minesweeper>('GAME_REVEALED')
     };
 
     private readonly gameLevelSettings: GameLevelSettings;
@@ -61,8 +31,8 @@ export class Game {
                 public board?: GameBoard) {
         this.gameLevelSettings = gameLevelSettings(gameLevel);
 
-        if (!this.board) {
-            this.publishEvent(Game.events.created(this));
+        if (!this.isStarted()) {
+            this.publishEvent(Minesweeper.events.created(this));
         }
     }
 
@@ -79,8 +49,16 @@ export class Game {
             .map((index) => this.getBoardPositionForPositionIndex(index));
     }
 
-    public revealPosition(position: Position): Game {
-        return this.startGame(position);
+    public revealPosition(position: Position): Minesweeper {
+        if (!this.isStarted()) {
+            return this.startGame(position);
+        }
+
+        const reveledGame = new Minesweeper(
+            this.eventPublisher, this.mineFactory, this.gameLevel, this.revealedBoard.reveal(position), this.board);
+
+        this.publishEvent(Minesweeper.events.revealed(reveledGame));
+        return reveledGame;
     }
 
     private getBoardPositionForPositionIndex(index: number): BoardPosition {
@@ -113,7 +91,7 @@ export class Game {
     private startGame(position: Position) {
         const board = this.createBoard(position);
 
-        const startedGame = new Game(
+        const startedGame = new Minesweeper(
             this.eventPublisher,
             this.mineFactory,
             this.gameLevel,
@@ -121,7 +99,7 @@ export class Game {
             board
         );
 
-        this.publishEvent(Game.events.started(startedGame));
+        this.publishEvent(Minesweeper.events.started(startedGame));
         return startedGame;
     }
 
@@ -130,12 +108,47 @@ export class Game {
         return createGameBoard(mineCreator)(this.getBoardSize());
     }
 
-    private publishEvent(event: Event<Game>) {
+    private publishEvent(event: Event<Minesweeper>) {
         this.eventPublisher.publish(event);
+    }
+
+    private isStarted() {
+        return !!this.board;
     }
 }
 
-export type GameCreator = (gameLevel: GameLevel) => Game;
+type BoardPositionNotRevealed = {
+    type: 'NOT_REVEALED',
+    position: Position
+};
+
+type BoardPositionRevealedWithBombNear = {
+    type: 'REVEALED_WITH_BOMB_NEAR',
+    bombCount: number,
+    position: Position
+};
+
+type BoardPositionWithNoBombNear = {
+    type: 'REVEALED_WITH_NO_BOMB_NEAR',
+    position: Position
+};
+
+export type BoardPosition =
+    BoardPositionNotRevealed
+    | BoardPositionRevealedWithBombNear
+    | BoardPositionWithNoBombNear;
+
+
+export const isRevealedWithNoBombNear = (boardPosition: BoardPosition): boardPosition is BoardPositionWithNoBombNear =>
+    boardPosition.type === 'REVEALED_WITH_NO_BOMB_NEAR';
+
+export const isRevealedWithBombsNear = (boardPosition: BoardPosition): boardPosition is BoardPositionRevealedWithBombNear =>
+    boardPosition.type === 'REVEALED_WITH_BOMB_NEAR';
+
+export const isRevealed = (boardPosition: BoardPosition) =>
+isRevealedWithBombsNear(boardPosition) || isRevealedWithNoBombNear(boardPosition);
+
+export type GameCreator = (gameLevel: GameLevel) => Minesweeper;
 
 export const gameFactory = (eventPublisher: EventPublisher, mineFactory: MineFactory = mineCreatorFactory): GameCreator => (gameLevel: GameLevel) =>
-    new Game(eventPublisher, mineFactory, gameLevel);
+    new Minesweeper(eventPublisher, mineFactory, gameLevel);
