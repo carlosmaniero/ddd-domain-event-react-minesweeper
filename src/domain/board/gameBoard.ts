@@ -11,14 +11,14 @@ export class GameBoard {
         this.board = board;
     }
 
-    public bombCount(position: Position) {
+    public nearBombCount(position: Position) {
         return this.getAdjacent(position)
             .filter(mineType => mineType === MineType.Mine)
             .length;
     }
 
-    public hasBomb(position: Position) {
-        return this.bombCount(position) > 0;
+    public hasBombNear(position: Position) {
+        return this.nearBombCount(position) > 0;
     }
 
     public getWidth() {

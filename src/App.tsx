@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import './App.css';
 import {LevelSelector} from "./components/levelSelector/LevelSelector";
-import {Minesweeper, gameFactory} from "./domain/minesweeper";
+import {gameFactory, Minesweeper} from "./domain/minesweeper";
 import {EventPublisher, eventPublisherBuilder} from "./domain/events/events";
 
 const App: React.FC = () => {

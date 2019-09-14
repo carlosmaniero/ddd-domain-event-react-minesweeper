@@ -40,10 +40,10 @@ describe('gameBoard', () => {
 
             mineCreator.mockReturnValue(MineType.NotMine);
             const board = createGameBoard(mineCreator)({width: 2, height: 2});
-            expect(board.bombCount(Position.of({x: 0, y: 0}))).toEqual(0);
-            expect(board.bombCount(Position.of({x: 1, y: 0}))).toEqual(0);
-            expect(board.bombCount(Position.of({x: 0, y: 1}))).toEqual(0);
-            expect(board.bombCount(Position.of({x: 1, y: 1}))).toEqual(0);
+            expect(board.nearBombCount(Position.of({x: 0, y: 0}))).toEqual(0);
+            expect(board.nearBombCount(Position.of({x: 1, y: 0}))).toEqual(0);
+            expect(board.nearBombCount(Position.of({x: 0, y: 1}))).toEqual(0);
+            expect(board.nearBombCount(Position.of({x: 1, y: 1}))).toEqual(0);
         });
 
         it('calculates the total of mines at the ', () => {
@@ -53,15 +53,15 @@ describe('gameBoard', () => {
 
             const board = createGameBoard(mineCreator)({width: 3, height: 3});
 
-            expect(board.bombCount(Position.of({x: 0, y: 0}))).toEqual(1);
-            expect(board.bombCount(Position.of({x: 1, y: 0}))).toEqual(1);
-            expect(board.bombCount(Position.of({x: 2, y: 0}))).toEqual(1);
-            expect(board.bombCount(Position.of({x: 0, y: 1}))).toEqual(1);
-            expect(board.bombCount(Position.of({x: 1, y: 1}))).toEqual(0);
-            expect(board.bombCount(Position.of({x: 2, y: 1}))).toEqual(1);
-            expect(board.bombCount(Position.of({x: 0, y: 2}))).toEqual(1);
-            expect(board.bombCount(Position.of({x: 1, y: 2}))).toEqual(1);
-            expect(board.bombCount(Position.of({x: 2, y: 2}))).toEqual(1);
+            expect(board.nearBombCount(Position.of({x: 0, y: 0}))).toEqual(1);
+            expect(board.nearBombCount(Position.of({x: 1, y: 0}))).toEqual(1);
+            expect(board.nearBombCount(Position.of({x: 2, y: 0}))).toEqual(1);
+            expect(board.nearBombCount(Position.of({x: 0, y: 1}))).toEqual(1);
+            expect(board.nearBombCount(Position.of({x: 1, y: 1}))).toEqual(0);
+            expect(board.nearBombCount(Position.of({x: 2, y: 1}))).toEqual(1);
+            expect(board.nearBombCount(Position.of({x: 0, y: 2}))).toEqual(1);
+            expect(board.nearBombCount(Position.of({x: 1, y: 2}))).toEqual(1);
+            expect(board.nearBombCount(Position.of({x: 2, y: 2}))).toEqual(1);
         });
 
         it('calculates the sum of bombs ', () => {
@@ -70,7 +70,7 @@ describe('gameBoard', () => {
             mineCreator.mockReturnValue(MineType.Mine);
             const board = createGameBoard(mineCreator)({width: 2, height: 2});
 
-            expect(board.bombCount(Position.of({x: 0, y: 0}))).toEqual(3);
+            expect(board.nearBombCount(Position.of({x: 0, y: 0}))).toEqual(3);
         });
     });
 });

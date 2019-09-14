@@ -1,7 +1,12 @@
-import {BoardPosition, Minesweeper, isRevealed, isRevealedWithBombsNear, isRevealedWithNoBombNear} from "../../domain/minesweeper";
 import styled from "styled-components";
 import React from "react";
 import {Position} from "../../domain/position/position";
+import {
+    BoardPosition,
+    isRevealed,
+    isRevealedWithBombsNear,
+    isRevealedWithNoBombNear
+} from "../../domain/position/boardPosition";
 
 interface GamePositionElementProps {
     boardPosition: BoardPosition

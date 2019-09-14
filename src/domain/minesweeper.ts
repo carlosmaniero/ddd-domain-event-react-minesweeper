@@ -4,6 +4,11 @@ import {mineCreatorFactory, MineFactory} from "./board/mine";
 import {createGameBoard, GameBoard} from "./board/gameBoard";
 import {GameLevelSettings, gameLevelSettings} from "./settings";
 import {RevealedBoard} from "./board/RevealedBoard";
+import {
+    BoardPosition, createNotRevealedPosition,
+    createRevealedPositionWithBombs,
+    createRevealedPositionWithoutBombs
+} from "./position/boardPosition";
 
 export enum GameLevel {
     EASY = 'Easy',
@@ -36,17 +41,18 @@ export class Minesweeper {
         }
     }
 
-    public getBoardSize() {
+    public boardSize() {
         return this.gameLevelSettings.boardSize;
     }
 
     public boardTotalPositions() {
-        return this.getBoardSize().width * this.getBoardSize().height;
+        return this.boardSize().width * this.boardSize().height;
     }
 
     public boardPositions(): BoardPosition[] {
         return range(this.boardTotalPositions())
-            .map((index) => this.getBoardPositionForPositionIndex(index));
+            .map((index) => this.positionFromIndex(index))
+            .map((position) => this.boardPosition(position));
     }
 
     public revealPosition(position: Position): Minesweeper {
@@ -61,31 +67,23 @@ export class Minesweeper {
         return reveledGame;
     }
 
-    private getBoardPositionForPositionIndex(index: number): BoardPosition {
-        const position = Position.of({
-            x: index % this.getBoardSize().width,
-            y: Math.trunc(index / this.getBoardSize().width)
-        });
-
+    private boardPosition(position: Position): BoardPosition {
         if (!this.revealedBoard.isRevealed(position) || !this.board) {
-            return {
-                type: 'NOT_REVEALED',
-                position: position
-            };
+            return createNotRevealedPosition(position);
         }
 
-        if (this.board.hasBomb(position)) {
-            return {
-                type: 'REVEALED_WITH_BOMB_NEAR',
-                position: position,
-                bombCount: this.board.bombCount(position)
-            };
+        if (this.board.hasBombNear(position)) {
+            return createRevealedPositionWithBombs(position, this.board.nearBombCount(position));
         }
 
-        return {
-            type: 'REVEALED_WITH_NO_BOMB_NEAR',
-            position: position,
-        };
+        return createRevealedPositionWithoutBombs(position);
+    }
+
+    private positionFromIndex(index: number) {
+        return Position.of({
+            x: index % this.boardSize().width,
+            y: Math.trunc(index / this.boardSize().width)
+        });
     }
 
     private startGame(position: Position) {
@@ -105,7 +103,7 @@ export class Minesweeper {
 
     private createBoard(position: Position) {
         const mineCreator = this.mineFactory(position, this.gameLevelSettings.mineProbability);
-        return createGameBoard(mineCreator)(this.getBoardSize());
+        return createGameBoard(mineCreator)(this.boardSize());
     }
 
     private publishEvent(event: Event<Minesweeper>) {
@@ -117,36 +115,13 @@ export class Minesweeper {
     }
 }
 
-type BoardPositionNotRevealed = {
-    type: 'NOT_REVEALED',
-    position: Position
+type MinesweeperConstructor = {
+    eventPublisher: EventPublisher,
+    mineFactory: MineFactory,
+    gameLevel: GameLevel,
+    revealedBoard: RevealedBoard,
+    board?: GameBoard
 };
-
-type BoardPositionRevealedWithBombNear = {
-    type: 'REVEALED_WITH_BOMB_NEAR',
-    bombCount: number,
-    position: Position
-};
-
-type BoardPositionWithNoBombNear = {
-    type: 'REVEALED_WITH_NO_BOMB_NEAR',
-    position: Position
-};
-
-export type BoardPosition =
-    BoardPositionNotRevealed
-    | BoardPositionRevealedWithBombNear
-    | BoardPositionWithNoBombNear;
-
-
-export const isRevealedWithNoBombNear = (boardPosition: BoardPosition): boardPosition is BoardPositionWithNoBombNear =>
-    boardPosition.type === 'REVEALED_WITH_NO_BOMB_NEAR';
-
-export const isRevealedWithBombsNear = (boardPosition: BoardPosition): boardPosition is BoardPositionRevealedWithBombNear =>
-    boardPosition.type === 'REVEALED_WITH_BOMB_NEAR';
-
-export const isRevealed = (boardPosition: BoardPosition) =>
-isRevealedWithBombsNear(boardPosition) || isRevealedWithNoBombNear(boardPosition);
 
 export type GameCreator = (gameLevel: GameLevel) => Minesweeper;
 

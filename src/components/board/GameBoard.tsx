@@ -1,8 +1,7 @@
-import {BoardPosition, Minesweeper, isRevealed, isRevealedWithBombsNear, isRevealedWithNoBombNear} from "../../domain/minesweeper";
 import React from "react";
 import styled from "styled-components";
-import {Position} from "../../domain/position/position";
 import {GamePositionButton} from "./GamePositionButton";
+import {Minesweeper} from "../../domain/minesweeper";
 
 export interface GameBoardProps {
     game: Minesweeper
@@ -24,7 +23,7 @@ const GameBoardGrid = styled.section`
 `;
 
 export const GameBoard = ({game}: GameBoardProps) =>
-    <GameBoardGrid {...game.getBoardSize()}>
+    <GameBoardGrid {...game.boardSize()}>
         {
             game.boardPositions().map((boardPosition, index) =>
                 <GamePositionButton
