@@ -33,6 +33,12 @@ export class GameBoard {
         return this.board.length;
     }
 
+    public bombCount() {
+        return this.board.flat()
+            .filter(mineType => mineType === MineType.Mine)
+            .length;
+    }
+
     private getAdjacent(position: Position): MineType[] {
         return position.getAdjacent()
             .map((position) => this.getByPosition(position));

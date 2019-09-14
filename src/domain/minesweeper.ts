@@ -23,6 +23,7 @@ const range = (size: number) => Array.from({length: size}, (_, index) => index);
 enum MinesweeperState {
     NotStarted,
     Started,
+    Finished,
     GameOver
 }
 
@@ -31,7 +32,8 @@ export class Minesweeper {
         created: eventCreator<Minesweeper>('GAME_CREATED'),
         started: eventCreator<Minesweeper>('GAME_STARTED'),
         revealed: eventCreator<Minesweeper>('GAME_REVEALED'),
-        gameOver: eventCreator<Minesweeper>('GAME_OVER')
+        gameOver: eventCreator<Minesweeper>('GAME_OVER'),
+        finished: eventCreator<Minesweeper>('GAME_FINISHED')
     };
 
     private readonly gameLevelSettings: GameLevelSettings;
@@ -76,15 +78,22 @@ export class Minesweeper {
             return this.gameOver();
         }
 
-        const reveledGame = new Minesweeper(
+        const revealedBoard = this.revealedBoard.reveal(position);
+
+        let reveledGame = new Minesweeper(
             this.eventPublisher,
             this.mineFactory,
             this.gameLevel,
-            this.revealedBoard.reveal(position),
-            this.board
+            revealedBoard,
+            this.board,
+            revealedBoard.hasUnrevealedBombs(this.board) ? this.state : MinesweeperState.Finished
         );
 
-        this.publishEvent(Minesweeper.events.revealed(reveledGame));
+        if (reveledGame.isFinished()) {
+            this.publishEvent(Minesweeper.events.finished(reveledGame));
+        } else {
+            this.publishEvent(Minesweeper.events.revealed(reveledGame));
+        }
         return reveledGame;
     }
 
@@ -115,7 +124,8 @@ export class Minesweeper {
             this.mineFactory,
             this.gameLevel,
             this.revealedBoard.reveal(position),
-            board
+            board,
+            MinesweeperState.Started
         );
 
         this.publishEvent(Minesweeper.events.started(startedGame));
@@ -151,6 +161,10 @@ export class Minesweeper {
 
     isGameOver(): boolean {
         return this.state === MinesweeperState.GameOver;
+    }
+
+    isFinished() {
+        return this.state === MinesweeperState.Finished;
     }
 }
 
