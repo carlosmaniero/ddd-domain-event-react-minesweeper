@@ -39,7 +39,7 @@ const textColor = ({boardPosition}: GamePositionElementProps) => {
 
 export const GamePositionElement = styled.button`
   background: ${({boardPosition}: GamePositionElementProps) => isRevealed(boardPosition) ? '#FCFCFC' : '#EFEFEF'};
-  font-size: 2rem;
+  font-size: 1.2rem;
   color: ${textColor};
 `;
 
