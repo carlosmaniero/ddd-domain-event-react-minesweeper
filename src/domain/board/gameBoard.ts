@@ -48,6 +48,13 @@ export class GameBoard {
         let boardElement = this.board[position.y];
         return boardElement ? boardElement[position.x] : MineType.NotMine;
     }
+
+    containsPosition(position: Position) {
+        if (position.y < 0 || position.x < 0) {
+            return false;
+        }
+        return position.y < this.getHeight() && position.x < this.getWidth();
+    }
 }
 
 export type BoardCreator = (boardSize: BoardSize) => GameBoard;

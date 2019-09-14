@@ -78,7 +78,7 @@ export class Minesweeper {
             return this.gameOver();
         }
 
-        const revealedBoard = this.revealedBoard.reveal(position);
+        const revealedBoard = this.revealedBoard.reveal(position, this.board);
 
         let reveledGame = new Minesweeper(
             this.eventPublisher,
@@ -123,7 +123,7 @@ export class Minesweeper {
             this.eventPublisher,
             this.mineFactory,
             this.gameLevel,
-            this.revealedBoard.reveal(position),
+            this.revealedBoard.reveal(position, board),
             board,
             MinesweeperState.Started
         );

@@ -23,6 +23,10 @@ export class Position {
         ];
     }
 
+    public isPresent(positions: Position[]) {
+        return positions.some((otherPosition) => this.sameOf(otherPosition));
+    }
+
     public sameOf(otherPosition: Position) {
         return this.x === otherPosition.x && this.y === otherPosition.y
     }
