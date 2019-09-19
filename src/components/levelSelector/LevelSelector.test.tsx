@@ -1,7 +1,7 @@
 import {LevelSelector} from "./LevelSelector";
 import {fireEvent, render} from "@testing-library/react";
 import React from "react";
-import {GameLevel} from "../../domain/minesweeper";
+import {GameLevel} from "../../domain/minesweeper/minesweeper";
 
 
 describe('LevelSelector', () => {

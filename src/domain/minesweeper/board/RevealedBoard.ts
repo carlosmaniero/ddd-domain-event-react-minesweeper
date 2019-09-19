@@ -1,4 +1,4 @@
-import {Position} from "../position/position";
+import {Position} from "../../position/position";
 import {GameBoard} from "./gameBoard";
 
 export class RevealedBoard {

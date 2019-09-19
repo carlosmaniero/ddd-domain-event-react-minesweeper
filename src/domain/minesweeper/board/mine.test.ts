@@ -1,5 +1,5 @@
 import {mineCreatorFactory, MineType} from "./mine";
-import {Position} from "../position/position";
+import {Position} from "../../position/position";
 
 describe('mineFactoryCreator', () => {
     it('always returns a non mine for the initial position', () => {

@@ -1,5 +1,5 @@
 import {MineCreator, MineType} from "./mine";
-import {Position} from "../position/position";
+import {Position} from "../../position/position";
 
 export interface BoardSize {
     width: number;

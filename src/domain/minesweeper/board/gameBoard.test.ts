@@ -1,6 +1,6 @@
 import {MineCreator, MineType} from "./mine";
 import {createGameBoard} from "./gameBoard";
-import {Position} from "../position/position";
+import {Position} from "../../position/position";
 
 describe('gameBoard', () => {
     let mineCreator: jest.Mock;

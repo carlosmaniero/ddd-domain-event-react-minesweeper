@@ -1,5 +1,5 @@
 import {LevelButton} from "./LevelButton";
-import {GameLevel, getAllGameLevels} from "../../domain/minesweeper";
+import {GameLevel, getAllGameLevels} from "../../domain/minesweeper/minesweeper";
 import React from "react";
 import styled from "styled-components";
 

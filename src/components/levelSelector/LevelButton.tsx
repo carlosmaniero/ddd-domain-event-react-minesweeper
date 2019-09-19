@@ -1,6 +1,6 @@
 import {RegularButton, RegularButtonProps} from "../designSystem/buttons/RegularButton";
 import React from "react";
-import {GameLevel} from "../../domain/minesweeper";
+import {GameLevel} from "../../domain/minesweeper/minesweeper";
 import styled from "styled-components";
 
 export interface LevelButtonProps {

@@ -1,7 +1,6 @@
 import {gameFactory, GameLevel, Minesweeper} from "./minesweeper";
-import {Position} from "./position/position";
+import {Position} from "../position/position";
 import {MineType} from "./board/mine";
-import {GameBoard} from "./board/gameBoard";
 
 describe('Game', () => {
     const createGameWithMockedDependencies = () => {
@@ -34,31 +33,6 @@ describe('Game', () => {
             expect(publisher).toBeCalledWith(Minesweeper.events.started(startedGame));
         });
 
-        it.each`
-            mineType
-            ${MineType.Mine}
-            ${MineType.NotMine}
-        `('create a board with all position as $mineType', ({mineType}) => {
-            const {createGame, mineFactory} = createGameWithMockedDependencies();
-            mineFactory.mockReturnValue(() => mineType);
-
-            const game = createGame(GameLevel.EASY);
-            const expectedBoard = new GameBoard([
-                [mineType, mineType, mineType, mineType, mineType, mineType],
-                [mineType, mineType, mineType, mineType, mineType, mineType],
-                [mineType, mineType, mineType, mineType, mineType, mineType],
-                [mineType, mineType, mineType, mineType, mineType, mineType],
-                [mineType, mineType, mineType, mineType, mineType, mineType],
-                [mineType, mineType, mineType, mineType, mineType, mineType],
-                [mineType, mineType, mineType, mineType, mineType, mineType],
-                [mineType, mineType, mineType, mineType, mineType, mineType],
-                [mineType, mineType, mineType, mineType, mineType, mineType],
-            ]);
-            const startedGame = game.revealPosition(Position.of({x: 0, y: 0}));
-
-            expect(startedGame.board).toEqual(expectedBoard);
-        });
-
         describe('Game Level', () => {
             it.each`
                 probability | level
@@ -89,10 +63,9 @@ describe('Game', () => {
                 const game = createGame(level);
                 const initialPosition = Position.of({x: 0, y: 0});
                 const startedGame = game.revealPosition(initialPosition);
-                const board = startedGame.board as GameBoard;
 
-                expect(board.getWidth()).toEqual(width);
-                expect(board.getHeight()).toEqual(height);
+                expect(startedGame.boardSize().width).toEqual(width);
+                expect(startedGame.boardSize().height).toEqual(height);
             });
         });
     });

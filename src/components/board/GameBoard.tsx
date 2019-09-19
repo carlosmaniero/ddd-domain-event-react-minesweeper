@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import styled from "styled-components";
 import {GamePositionButton, GamePositionProps} from "./GamePositionButton";
-import {Minesweeper} from "../../domain/minesweeper";
+import {Minesweeper} from "../../domain/minesweeper/minesweeper";
 import {Position} from "../../domain/position/position";
 
 export interface GameBoardProps {

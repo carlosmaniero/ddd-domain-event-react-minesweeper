@@ -1,4 +1,4 @@
-import {Position} from '../position/position';
+import {Position} from '../../position/position';
 
 export enum MineType {
     Mine = 'Mine',

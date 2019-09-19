@@ -1,14 +1,15 @@
-import {Event, eventCreator, EventPublisher} from "./events/events";
-import {Position} from './position/position'
+import {Event, eventCreator, EventPublisher} from "../events/events";
+import {Position} from '../position/position'
 import {mineCreatorFactory, MineFactory} from "./board/mine";
 import {createGameBoard, GameBoard} from "./board/gameBoard";
-import {GameLevelSettings, gameLevelSettings} from "./settings";
+import {GameLevelSettings, gameLevelSettings} from "../settings";
 import {RevealedBoard} from "./board/RevealedBoard";
 import {
-    BoardPosition, createNotRevealedPosition,
+    BoardPosition,
+    createNotRevealedPosition,
     createRevealedPositionWithBombs,
     createRevealedPositionWithoutBombs
-} from "./position/boardPosition";
+} from "../position/boardPosition";
 
 export enum GameLevel {
     EASY = 'Easy',
@@ -40,13 +41,14 @@ export class Minesweeper {
 
     constructor(private readonly eventPublisher: EventPublisher,
                 private readonly mineFactory: MineFactory,
-                public readonly gameLevel: GameLevel,
+                private readonly gameLevel: GameLevel,
                 private readonly revealedBoard: RevealedBoard = new RevealedBoard(),
-                public readonly board?: GameBoard,
+                private readonly board?: GameBoard,
                 private readonly state: MinesweeperState = MinesweeperState.NotStarted) {
         this.gameLevelSettings = gameLevelSettings(gameLevel);
+        this.gameLevel = gameLevel;
 
-        if (!this.isStarted()) {
+        if (!this.board) {
             this.publishEvent(Minesweeper.events.created(this));
         }
     }
@@ -70,7 +72,7 @@ export class Minesweeper {
             return this;
         }
 
-        if (!this.isStarted()) {
+        if (!this.board) {
             return this.startGame(position);
         }
 
@@ -139,10 +141,6 @@ export class Minesweeper {
 
     private publishEvent(event: Event<Minesweeper>) {
         this.eventPublisher.publish(event);
-    }
-
-    private isStarted(): this is { board: GameBoard } {
-        return !!this.board;
     }
 
     private gameOver() {

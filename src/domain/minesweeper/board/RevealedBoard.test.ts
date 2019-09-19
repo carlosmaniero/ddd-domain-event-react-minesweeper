@@ -1,7 +1,7 @@
 import {GameBoard} from "./gameBoard";
 import {MineType} from "./mine";
 import {RevealedBoard} from "./RevealedBoard";
-import {Position} from "../position/position";
+import {Position} from "../../position/position";
 
 describe('RevealedBoard', () => {
     it('auto discover non bomb positions', () => {
