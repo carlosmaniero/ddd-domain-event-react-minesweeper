@@ -2,8 +2,9 @@ import React, {useState} from 'react';
 import './App.css';
 import {LevelSelector} from "./components/levelSelector/LevelSelector";
 import {gameFactory, Minesweeper} from "./domain/minesweeper/minesweeper";
-import {EventPublisher, eventPublisherBuilder} from "./domain/events/events";
+import {EventPublisher} from "./domain/events/events";
 import {GameBoard} from "./components/board/GameBoard";
+import {eventPublisherBuilder} from "./infrastructure/events/eventPublisher";
 
 const App: React.FC = () => {
     const [game, setGame] = useState<Minesweeper>();

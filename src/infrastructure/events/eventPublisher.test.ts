@@ -1,4 +1,5 @@
-import {eventCreator, EventCreator, eventPublisherBuilder} from "./events";
+import {eventPublisherBuilder} from "./eventPublisher";
+import {EventCreator, eventCreator} from "../../domain/events/events";
 
 describe('Domain Events', () => {
     it('creates an event', () => {

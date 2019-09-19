@@ -1,6 +1,6 @@
-import {eventPublisherBuilder} from "../events/events";
 import {MineIndicator} from "./MineIndicator";
 import {Position} from "../position/position";
+import {eventPublisherBuilder} from "../../infrastructure/events/eventPublisher";
 
 describe('MineIndicator', () => {
     describe('Adding a flag', () => {
