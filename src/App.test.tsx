@@ -3,10 +3,11 @@ import App from "./App";
 import {EventHandlerContext} from "./components/eventHandler/eventHandlerContext";
 import {fireEvent, render} from "@testing-library/react";
 import {createEventHandler} from "./infrastructure/events/eventHandler";
-import {GameLevel, Minesweeper, minesweeperFactory} from "./domain/minesweeper/minesweeper";
+import {Minesweeper, minesweeperFactory} from "./domain/minesweeper/minesweeper";
 import {act} from "react-dom/test-utils";
 import {Position} from "./domain/position/position";
 import {MineType} from "./domain/minesweeper/board/mine";
+import {GameLevel} from "./domain/minesweeper/gameLevel";
 
 
 describe('App Integration test', () => {

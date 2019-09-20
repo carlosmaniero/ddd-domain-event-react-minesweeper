@@ -1,5 +1,6 @@
-import {GameLevel, Minesweeper} from "../minesweeper";
+import {Minesweeper} from "../minesweeper";
 import {CreateMinesweeperService} from "./createMinesweeperService";
+import {GameLevel} from "../gameLevel";
 
 describe('createMinesweeperService', () => {
     it('publish an event when a game is created', () => {

@@ -1,7 +1,7 @@
 import {LevelButton} from "./LevelButton";
-import {GameLevel, getAllGameLevels} from "../../domain/minesweeper/minesweeper";
 import React from "react";
 import styled from "styled-components";
+import {GameLevel, getAllGameLevels} from "../../domain/minesweeper/gameLevel";
 
 const LevelSelectorSection = styled.section`
   border-radius: 10px;

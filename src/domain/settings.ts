@@ -1,5 +1,5 @@
 import {BoardSize} from "./minesweeper/board/gameBoard";
-import {GameLevel} from "./minesweeper/minesweeper";
+import {GameLevel} from "./minesweeper/gameLevel";
 
 export interface GameLevelSettings {
     mineProbability: number;

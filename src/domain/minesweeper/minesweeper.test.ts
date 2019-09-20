@@ -1,6 +1,7 @@
-import {minesweeperFactory, GameLevel, Minesweeper} from "./minesweeper";
+import {minesweeperFactory, Minesweeper} from "./minesweeper";
 import {Position} from "../position/position";
 import {MineType} from "./board/mine";
+import {GameLevel} from "./gameLevel";
 
 describe('Game', () => {
     const createGameWithMockedDependencies = () => {

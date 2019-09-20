@@ -1,5 +1,6 @@
 import {EventPublisher} from "../../events/events";
-import {GameLevel, Minesweeper, MinesweeperCreator, minesweeperFactory} from "../minesweeper";
+import {Minesweeper, MinesweeperCreator, minesweeperFactory} from "../minesweeper";
+import {GameLevel} from "../gameLevel";
 
 export class CreateMinesweeperService {
     private readonly minesweeperFactory: MinesweeperCreator;

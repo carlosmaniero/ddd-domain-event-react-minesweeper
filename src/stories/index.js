@@ -7,12 +7,13 @@ import {linkTo} from '@storybook/addon-links';
 import {Welcome} from '@storybook/react/demo';
 import {RegularButton} from "../components/designSystem/buttons/RegularButton";
 import {LevelButton} from "../components/levelSelector/LevelButton";
-import {minesweeperFactory, GameLevel} from "../domain/minesweeper/minesweeper";
+import {minesweeperFactory} from "../domain/minesweeper/minesweeper";
 import {LevelSelector} from "../components/levelSelector/LevelSelector";
 import {GameBoard} from "../components/board/GameBoard";
 import {MineType} from "../domain/minesweeper/board/mine";
 import {Position} from "../domain/position/position";
 import {GamePositionButton} from "../components/board/GamePositionButton";
+import {GameLevel} from "../domain/minesweeper/gameLevel";
 
 storiesOf('Welcome', module).add('to Storybook', () => <Welcome showApp={linkTo('Button')} />);
 

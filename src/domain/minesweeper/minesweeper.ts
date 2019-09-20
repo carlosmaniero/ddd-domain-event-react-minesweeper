@@ -10,14 +10,7 @@ import {
     createRevealedPositionWithBombs,
     createRevealedPositionWithoutBombs
 } from "../position/boardPosition";
-
-export enum GameLevel {
-    EASY = 'Easy',
-    MEDIUM = 'Medium',
-    HARD = 'Hard',
-}
-
-export const getAllGameLevels = () => Object.values(GameLevel);
+import {GameLevel} from "./gameLevel";
 
 const range = (size: number) => Array.from({length: size}, (_, index) => index);
 
