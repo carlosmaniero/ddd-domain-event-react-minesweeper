@@ -6,6 +6,7 @@ import {LevelSelector} from "./components/levelSelector/LevelSelector";
 import {CreateMinesweeperService} from "./domain/minesweeper/services/createMinesweeperService";
 import {anyOf} from "./domain/events/events";
 import {GameBoard} from "./components/board/GameBoard";
+import {GameOver} from "./components/gameStatus/gameOver";
 
 const App: React.FC = () => {
     const [minesweeper, setMinesweeper] = useState<Minesweeper>();
@@ -17,7 +18,8 @@ const App: React.FC = () => {
             .listen(anyOf([
                 Minesweeper.events.created,
                 Minesweeper.events.started,
-                Minesweeper.events.revealed
+                Minesweeper.events.revealed,
+                Minesweeper.events.gameOver
             ]), setMinesweeper);
         return () => eventPublisher.unsubscribe(eventPublisherSubscriptionID);
     }, [eventPublisher]);
@@ -26,6 +28,7 @@ const App: React.FC = () => {
         <div className="App">
             {!minesweeper && <LevelSelector onSelect={(gameLevel) => createMinesweeperService.create(gameLevel)}/>}
             {minesweeper && <GameBoard game={minesweeper} />}
+            {minesweeper && minesweeper.isGameOver() && <GameOver />}
         </div>
     );
 };

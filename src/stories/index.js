@@ -13,7 +13,12 @@ import {GameBoard} from "../components/board/GameBoard";
 import {MineType} from "../domain/minesweeper/board/mine";
 import {Position} from "../domain/position/position";
 import {GamePositionButton} from "../components/board/GamePositionButton";
-import {GameLevel} from "../domain/minesweeper/gameLevel";
+import {GameLevel, getAllGameLevels} from "../domain/minesweeper/gameLevel";
+import {GameOver} from "../components/gameStatus/gameOver";
+
+const eventPublisherLog = {
+    publish: action('eventPublished')
+};
 
 storiesOf('Welcome', module).add('to Storybook', () => <Welcome showApp={linkTo('Button')} />);
 
@@ -22,15 +27,11 @@ storiesOf('Button', module)
 
 const levelButtonStory = storiesOf('LevelButton', module);
 
-Object.values(GameLevel).forEach((level) =>
+getAllGameLevels().forEach((level) =>
     levelButtonStory.add(level, () =>  <LevelButton onClick={action('clicked')} level={level}/>));
 
 storiesOf('LevelSelector', module)
     .add(`default`, () => <LevelSelector onSelect={action('selected')}/>);
-
-const eventPublisherLog = {
-    publish: action('eventPublished')
-};
 
 storiesOf('Game Board', module)
     .add(`New Game - Easy`, () => <GameBoard game={minesweeperFactory(eventPublisherLog)(GameLevel.EASY)} />)
@@ -72,3 +73,6 @@ storiesOf('Game Position', module)
     .add(`Game Position - 8`, () => <GamePositionButton
         onClick={action('clicked')}
         boardPosition={{type: 'REVEALED_WITH_BOMB_NEAR', bombCount: 8, position: Position.of({x: 0, y: 0})}} />);
+
+storiesOf('Game Over', module)
+    .add(`Game Position`, () => <GameOver />);
