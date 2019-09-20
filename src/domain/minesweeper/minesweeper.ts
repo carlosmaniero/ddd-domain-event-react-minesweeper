@@ -53,7 +53,7 @@ export class Minesweeper {
         return this.gameLevelSettings.boardSize;
     }
 
-    public boardTotalPositions() {
+    private boardTotalPositions() {
         return this.boardSize().width * this.boardSize().height;
     }
 
@@ -64,7 +64,7 @@ export class Minesweeper {
     }
 
     public revealPosition(position: Position): Minesweeper {
-        if (this.isGameOver()) {
+        if (this.isGameOver() || this.isFinished()) {
             return this;
         }
 

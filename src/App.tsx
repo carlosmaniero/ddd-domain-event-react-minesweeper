@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import './App.css';
 import {LevelSelector} from "./components/levelSelector/LevelSelector";
-import {minesweeperFactory, Minesweeper} from "./domain/minesweeper/minesweeper";
+import {Minesweeper} from "./domain/minesweeper/minesweeper";
 import {EventPublisher} from "./domain/events/events";
 import {GameBoard} from "./components/board/GameBoard";
 import {eventPublisherBuilder} from "./infrastructure/events/eventPublisher";

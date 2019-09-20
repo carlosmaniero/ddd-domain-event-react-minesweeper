@@ -232,5 +232,26 @@ describe('Game', () => {
 
             expect(revealPositionGame.isFinished()).toBeTruthy();
         });
+
+        it('does not allows bomb reveal after game finishes', () => {
+            const initialPosition = Position.of({x: 0, y: 0});
+            const finishingPosition = Position.of({x: 1, y: 1});
+
+            const {publisher, createGame, mineFactory} = createGameWithMockedDependencies();
+
+            mineFactory.mockReturnValue((position: Position) =>
+                position.sameOf(initialPosition) || position.sameOf(finishingPosition)
+                    ? MineType.NotMine
+                    : MineType.Mine);
+
+            const game = createGame(GameLevel.EASY);
+
+            const revealPositionGame = game
+                .revealPosition(initialPosition)
+                .revealPosition(finishingPosition)
+                .revealPosition(Position.of({x: 2, y: 2}));
+
+            expect(publisher).toHaveBeenLastCalledWith(Minesweeper.events.finished(revealPositionGame));
+        });
     });
 });
