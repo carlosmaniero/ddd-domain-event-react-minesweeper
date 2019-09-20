@@ -53,10 +53,6 @@ export class Minesweeper {
         return this.gameLevelSettings.boardSize;
     }
 
-    private boardTotalPositions() {
-        return this.boardSize().width * this.boardSize().height;
-    }
-
     public boardPositions(): BoardPosition[] {
         return range(this.boardTotalPositions())
             .map((index) => this.positionFromIndex(index))
@@ -76,15 +72,19 @@ export class Minesweeper {
             return this.gameOver();
         }
 
-        const revealedBoard = this.revealedBoard.reveal(position, this.board);
+        return this.handleRevelPosition(position, this.board);
+    }
+
+    private handleRevelPosition(position: Position, board: GameBoard) {
+        const revealedBoard = this.revealedBoard.reveal(position, board);
 
         let reveledGame = new Minesweeper(
             this.eventPublisher,
             this.mineFactory,
             this.gameLevel,
             revealedBoard,
-            this.board,
-            revealedBoard.hasUnrevealedBombs(this.board) ? this.state : MinesweeperState.Finished
+            board,
+            this.stateFrom(revealedBoard)
         );
 
         if (reveledGame.isFinished()) {
@@ -92,7 +92,20 @@ export class Minesweeper {
         } else {
             this.publishEvent(Minesweeper.events.revealed(reveledGame));
         }
+
         return reveledGame;
+    }
+
+    private stateFrom(revealedBoard: RevealedBoard) {
+        if (!this.board || revealedBoard.hasUnrevealedBombs(this.board)) {
+            return this.state;
+        }
+
+        return MinesweeperState.Finished;
+    }
+
+    private boardTotalPositions() {
+        return this.boardSize().width * this.boardSize().height;
     }
 
     private boardPosition(position: Position): BoardPosition {

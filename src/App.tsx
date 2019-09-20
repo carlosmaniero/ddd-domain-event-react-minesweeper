@@ -19,7 +19,6 @@ const App: React.FC = () => {
                 Minesweeper.events.started,
                 Minesweeper.events.revealed
             ]), setMinesweeper);
-
         return () => eventPublisher.unsubscribe(eventPublisherSubscriptionID);
     }, [eventPublisher]);
 
