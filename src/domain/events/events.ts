@@ -19,6 +19,11 @@ export type EventCreator<T> = {
 const isTypeOf = <T>(type: string) =>
     (event: Event<unknown>): event is Event<T> => event.type === type;
 
+export const anyOf = <T>(eventCreators: EventCreator<T>[]): EventChecker<T> => ({
+    isTypeOf: (event: Event<unknown>): event is Event<T> =>
+        eventCreators.some((eventCreator) => eventCreator.isTypeOf(event))
+});
+
 export const eventCreator = <T>(type: string): EventCreator<T> =>
     Object.assign(
         (payload: T) => ({type, payload}),
