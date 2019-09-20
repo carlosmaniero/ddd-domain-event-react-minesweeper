@@ -1,16 +1,16 @@
-import {Event, EventCreator, EventPublisher} from "../../domain/events/events";
+import {Event, EventChecker, EventPublisher} from "../../domain/events/events";
 
 export type EventPublisherCallback<T> = (payload: T) => void;
 export type SubscriptionID = number;
 
 interface Subscription {
-    eventCreator: EventCreator<unknown>;
+    eventCreator: EventChecker<unknown>;
     callback: EventPublisherCallback<unknown>;
     subscriptionID: SubscriptionID
 }
 
 export type EventHandler = EventPublisher & {
-    listen: <T>(eventCreator: EventCreator<T>, callback: EventPublisherCallback<T>) => SubscriptionID,
+    listen: <T>(eventCreator: EventChecker<T>, callback: EventPublisherCallback<T>) => SubscriptionID,
     unsubscribe: (subscriptionID: SubscriptionID) => void
 }
 
@@ -19,12 +19,12 @@ export const createEventHandler = (): EventHandler => {
     let subscriptionID: SubscriptionID = 0;
 
     return {
-        listen<T>(eventCreator: EventCreator<T>, callback: EventPublisherCallback<T>) {
+        listen<T>(eventChecker: EventChecker<T>, callback: EventPublisherCallback<T>) {
             subscriptionID++;
 
             subscriptions.push({
                 subscriptionID: subscriptionID,
-                eventCreator: (eventCreator as EventCreator<unknown>),
+                eventCreator: (eventChecker as EventChecker<unknown>),
                 callback: (callback as EventPublisherCallback<unknown>)
             });
 

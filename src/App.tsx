@@ -1,30 +1,35 @@
-import React, {useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import './App.css';
-import {LevelSelector} from "./components/levelSelector/LevelSelector";
 import {Minesweeper} from "./domain/minesweeper/minesweeper";
-import {GameBoard} from "./components/board/GameBoard";
-import {createEventHandler} from "./infrastructure/events/eventHandler";
+import {EventHandlerContext} from "./components/eventHandler/eventHandlerContext";
+import {LevelSelector} from "./components/levelSelector/LevelSelector";
 import {CreateMinesweeperService} from "./domain/minesweeper/services/createMinesweeperService";
+import {Event, EventChecker} from "./domain/events/events";
+import {GameBoard} from "./components/board/GameBoard";
 
 const App: React.FC = () => {
     const [game, setGame] = useState<Minesweeper>();
-
-    const eventPublisher = createEventHandler();
-    eventPublisher.listen(Minesweeper.events.created, setGame);
-    eventPublisher.listen(Minesweeper.events.started, setGame);
-    eventPublisher.listen(Minesweeper.events.revealed, setGame);
-    eventPublisher.listen(Minesweeper.events.gameOver, setGame);
-    eventPublisher.listen(Minesweeper.events.finished, setGame);
-
+    const eventPublisher = useContext(EventHandlerContext);
     const createMinesweeperService = new CreateMinesweeperService(eventPublisher);
 
+    useEffect(() => {
+        const eventChecker: EventChecker<Minesweeper> = {
+            isTypeOf: (event): event is Event<Minesweeper> =>
+                Minesweeper.events.created.isTypeOf(event)
+                || Minesweeper.events.started.isTypeOf(event)
+                || Minesweeper.events.revealed.isTypeOf(event)
+        };
+
+        const eventPublisherSubscriptionID = eventPublisher.listen(eventChecker, setGame);
+
+        return () => eventPublisher.unsubscribe(eventPublisherSubscriptionID);
+    }, [eventPublisher]);
+
     return (
-      <div className="App">
-          {!game && <LevelSelector onSelect={(gameLevel) => createMinesweeperService.create(gameLevel)}/>}
-          {game && <GameBoard game={game}/>}
-          {game && game.isGameOver() && "Perdeu!"}
-          {game && game.isFinished() && "Ganhou!"}
-      </div>
+        <div className="App">
+            {!game && <LevelSelector onSelect={(gameLevel) => createMinesweeperService.create(gameLevel)}/>}
+            {game && <GameBoard game={game} />}
+        </div>
     );
 };
 

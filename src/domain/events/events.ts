@@ -7,11 +7,14 @@ export interface EventPublisher {
     publish: (event: Event<unknown>) => void
 }
 
+export interface EventChecker<T> {
+    isTypeOf: (event: Event<unknown>) => event is Event<T>
+} 
+
 export type EventCreator<T> = {
     (payload: T): Event<T>;
     type: string;
-    isTypeOf: (event: Event<unknown>) => event is Event<T>
-};
+} & EventChecker<T>;
 
 const isTypeOf = <T>(type: string) =>
     (event: Event<unknown>): event is Event<T> => event.type === type;
