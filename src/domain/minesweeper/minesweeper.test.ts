@@ -1,4 +1,4 @@
-import {gameFactory, GameLevel, Minesweeper} from "./minesweeper";
+import {minesweeperFactory, GameLevel, Minesweeper} from "./minesweeper";
 import {Position} from "../position/position";
 import {MineType} from "./board/mine";
 
@@ -10,16 +10,9 @@ describe('Game', () => {
         return {
             mineFactory,
             publisher,
-            createGame: gameFactory({publish: publisher}, mineFactory),
+            createGame: minesweeperFactory({publish: publisher}, mineFactory),
         }
     };
-
-    it('publish an event when a game is created', () => {
-        const {publisher, createGame} = createGameWithMockedDependencies();
-
-        const game = createGame(GameLevel.EASY);
-        expect(publisher).toBeCalledWith(Minesweeper.events.created(game));
-    });
 
     describe('starting game', () => {
         it('publish an event with a started game', () => {
@@ -29,7 +22,7 @@ describe('Game', () => {
             const game = createGame(GameLevel.EASY);
             const startedGame = game.revealPosition(Position.of({x: 0, y: 0}));
 
-            expect(publisher).toBeCalledTimes(2);
+            expect(publisher).toBeCalledTimes(1);
             expect(publisher).toBeCalledWith(Minesweeper.events.started(startedGame));
         });
 
@@ -123,7 +116,7 @@ describe('Game', () => {
                     .revealPosition(initialPosition)
                     .revealPosition(revealPosition);
 
-                expect(publisher).toHaveBeenNthCalledWith(3, Minesweeper.events.revealed(revealPositionGame));
+                expect(publisher).toHaveBeenNthCalledWith(2, Minesweeper.events.revealed(revealPositionGame));
             });
 
             it('Revel a position with no mine near', () => {
@@ -159,7 +152,7 @@ describe('Game', () => {
                 .revealPosition(initialPosition)
                 .revealPosition(Position.of({x: 1, y: 1}));
 
-            expect(publisher).toHaveBeenNthCalledWith(3, Minesweeper.events.gameOver(revealPositionGame));
+            expect(publisher).toHaveBeenNthCalledWith(2, Minesweeper.events.gameOver(revealPositionGame));
         });
 
         it('marks it self as game over', () => {
@@ -195,7 +188,7 @@ describe('Game', () => {
                 .revealPosition(Position.of({x: 1, y: 1}))
                 .revealPosition(afterGameOverRevealPosition);
 
-            expect(publisher).toBeCalledTimes(3);
+            expect(publisher).toBeCalledTimes(2);
         });
     });
 
@@ -217,7 +210,7 @@ describe('Game', () => {
                 .revealPosition(initialPosition)
                 .revealPosition(finishingPosition);
 
-            expect(publisher).toHaveBeenNthCalledWith(3, Minesweeper.events.finished(revealPositionGame));
+            expect(publisher).toHaveBeenNthCalledWith(2, Minesweeper.events.finished(revealPositionGame));
         });
 
         it('marks as finished', () => {

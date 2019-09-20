@@ -7,7 +7,7 @@ import {linkTo} from '@storybook/addon-links';
 import {Welcome} from '@storybook/react/demo';
 import {RegularButton} from "../components/designSystem/buttons/RegularButton";
 import {LevelButton} from "../components/levelSelector/LevelButton";
-import {gameFactory, GameLevel} from "../domain/minesweeper/minesweeper";
+import {minesweeperFactory, GameLevel} from "../domain/minesweeper/minesweeper";
 import {LevelSelector} from "../components/levelSelector/LevelSelector";
 import {GameBoard} from "../components/board/GameBoard";
 import {MineType} from "../domain/minesweeper/board/mine";
@@ -32,16 +32,16 @@ const eventPublisherLog = {
 };
 
 storiesOf('Game Board', module)
-    .add(`New Game - Easy`, () => <GameBoard game={gameFactory(eventPublisherLog)(GameLevel.EASY)} />)
-    .add(`New Game - Medium`, () => <GameBoard game={gameFactory(eventPublisherLog)(GameLevel.MEDIUM)} />)
-    .add(`New Game - Hard`, () => <GameBoard game={gameFactory(eventPublisherLog)(GameLevel.HARD)} />)
+    .add(`New Game - Easy`, () => <GameBoard game={minesweeperFactory(eventPublisherLog)(GameLevel.EASY)} />)
+    .add(`New Game - Medium`, () => <GameBoard game={minesweeperFactory(eventPublisherLog)(GameLevel.MEDIUM)} />)
+    .add(`New Game - Hard`, () => <GameBoard game={minesweeperFactory(eventPublisherLog)(GameLevel.HARD)} />)
     .add(`Game - Started no mine`, () => {
-        const game = gameFactory(eventPublisherLog, () => () => MineType.NotMine)(GameLevel.EASY)
+        const game = minesweeperFactory(eventPublisherLog, () => () => MineType.NotMine)(GameLevel.EASY)
             .revealPosition(Position.of({x: 2, y: 2}));
         return <GameBoard game={game} />
     })
     .add(`Game - Started mine`, () => {
-        const game = gameFactory(eventPublisherLog, () => () => MineType.Mine)(GameLevel.EASY)
+        const game = minesweeperFactory(eventPublisherLog, () => () => MineType.Mine)(GameLevel.EASY)
             .revealPosition(Position.of({x: 2, y: 2}));
         return <GameBoard game={game} />
     });

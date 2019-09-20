@@ -1,10 +1,11 @@
 import React, {useState} from 'react';
 import './App.css';
 import {LevelSelector} from "./components/levelSelector/LevelSelector";
-import {gameFactory, Minesweeper} from "./domain/minesweeper/minesweeper";
+import {minesweeperFactory, Minesweeper} from "./domain/minesweeper/minesweeper";
 import {EventPublisher} from "./domain/events/events";
 import {GameBoard} from "./components/board/GameBoard";
 import {eventPublisherBuilder} from "./infrastructure/events/eventPublisher";
+import {CreateMinesweeperService} from "./domain/minesweeper/services/createMinesweeperService";
 
 const App: React.FC = () => {
     const [game, setGame] = useState<Minesweeper>();
@@ -17,11 +18,11 @@ const App: React.FC = () => {
         .listen(Minesweeper.events.finished, setGame)
         .build();
 
-    const createGame = gameFactory(eventPublisher);
+    const createMinesweeperService = new CreateMinesweeperService(eventPublisher);
 
     return (
       <div className="App">
-          {!game && <LevelSelector onSelect={(gameLevel) => createGame(gameLevel)}/>}
+          {!game && <LevelSelector onSelect={(gameLevel) => createMinesweeperService.create(gameLevel)}/>}
           {game && <GameBoard game={game}/>}
           {game && game.isGameOver() && "Perdeu!"}
           {game && game.isFinished() && "Ganhou!"}

@@ -41,16 +41,12 @@ export class Minesweeper {
 
     constructor(private readonly eventPublisher: EventPublisher,
                 private readonly mineFactory: MineFactory,
-                private readonly gameLevel: GameLevel,
+                public readonly gameLevel: GameLevel,
                 private readonly revealedBoard: RevealedBoard = new RevealedBoard(),
                 private readonly board?: GameBoard,
                 private readonly state: MinesweeperState = MinesweeperState.NotStarted) {
         this.gameLevelSettings = gameLevelSettings(gameLevel);
         this.gameLevel = gameLevel;
-
-        if (!this.board) {
-            this.publishEvent(Minesweeper.events.created(this));
-        }
     }
 
     public boardSize() {
@@ -166,7 +162,7 @@ export class Minesweeper {
     }
 }
 
-export type GameCreator = (gameLevel: GameLevel) => Minesweeper;
+export type MinesweeperCreator = (gameLevel: GameLevel) => Minesweeper;
 
-export const gameFactory = (eventPublisher: EventPublisher, mineFactory: MineFactory = mineCreatorFactory): GameCreator => (gameLevel: GameLevel) =>
+export const minesweeperFactory = (eventPublisher: EventPublisher, mineFactory: MineFactory = mineCreatorFactory): MinesweeperCreator => (gameLevel: GameLevel) =>
     new Minesweeper(eventPublisher, mineFactory, gameLevel);
