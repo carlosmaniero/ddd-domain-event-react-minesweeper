@@ -4,7 +4,7 @@ import {minesweeperFactory, GameLevel} from "../../domain/minesweeper/minesweepe
 import React from "react";
 import {Position} from "../../domain/position/position";
 import {MineType} from "../../domain/minesweeper/board/mine";
-import {eventPublisherBuilder} from "../../infrastructure/events/eventPublisher";
+import {createEventHandler} from "../../infrastructure/events/eventHandler";
 
 describe('GameBoard', () => {
 
@@ -14,7 +14,7 @@ describe('GameBoard', () => {
         ${GameLevel.MEDIUM} | ${9 * 12}
         ${GameLevel.HARD}   | ${12 * 15}
     `('Renders the game board size is $size for $gameLevel', ({gameLevel, size}) => {
-        const game = minesweeperFactory(eventPublisherBuilder().build())(gameLevel);
+        const game = minesweeperFactory(createEventHandler())(gameLevel);
 
         const {container} = render(<GameBoard game={game}/>);
 
@@ -22,7 +22,7 @@ describe('GameBoard', () => {
     });
 
     it('starts a game at the first click', () => {
-        const game = minesweeperFactory(eventPublisherBuilder().build())(GameLevel.EASY);
+        const game = minesweeperFactory(createEventHandler())(GameLevel.EASY);
         const startGameSpy = jest.spyOn(game, 'revealPosition');
 
         const {getByLabelText} = render(<GameBoard game={game}/>);
@@ -32,7 +32,7 @@ describe('GameBoard', () => {
     });
 
     it('revels the selected position without bombs', () => {
-        const game = minesweeperFactory(eventPublisherBuilder().build(), () => () => MineType.NotMine)(GameLevel.EASY);
+        const game = minesweeperFactory(createEventHandler(), () => () => MineType.NotMine)(GameLevel.EASY);
         const gameWithRevealedPosition = game.revealPosition(Position.of({x: 5, y: 8}));
         const {queryByLabelText} = render(<GameBoard game={gameWithRevealedPosition}/>);
 
@@ -41,7 +41,7 @@ describe('GameBoard', () => {
     });
 
     it('revels the selected position with bombs', () => {
-        const game = minesweeperFactory(eventPublisherBuilder().build(), () => () => MineType.Mine)(GameLevel.EASY);
+        const game = minesweeperFactory(createEventHandler(), () => () => MineType.Mine)(GameLevel.EASY);
         const gameWithRevealedPosition = game.revealPosition(Position.of({x: 2, y: 2}));
         const {getByLabelText} = render(<GameBoard game={gameWithRevealedPosition}/>);
 

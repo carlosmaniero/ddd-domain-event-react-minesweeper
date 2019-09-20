@@ -1,14 +1,14 @@
 import {MineIndicator} from "./MineIndicator";
 import {Position} from "../position/position";
-import {eventPublisherBuilder} from "../../infrastructure/events/eventPublisher";
+import {createEventHandler} from "../../infrastructure/events/eventHandler";
 
 describe('MineIndicator', () => {
     describe('Adding a flag', () => {
         it('publishes an event when a position is added', () => {
             const flagAddedCallback = jest.fn();
-            const eventPublisher = eventPublisherBuilder()
-                .listen(MineIndicator.events.flagAdded, flagAddedCallback)
-                .build();
+            const eventPublisher = createEventHandler();
+            eventPublisher.listen(MineIndicator.events.flagAdded, flagAddedCallback);
+
             const mineIndicator = new MineIndicator(eventPublisher);
 
             const mineIndicatorAfterToggle = mineIndicator.toggleFlag(Position.of({x: 0, y: 0}));
@@ -17,7 +17,7 @@ describe('MineIndicator', () => {
         });
 
         it('marks flagged', () => {
-            const eventPublisher = eventPublisherBuilder().build();
+            const eventPublisher = createEventHandler();
             const mineIndicator = new MineIndicator(eventPublisher);
 
             const mineIndicatorAfterToggle = mineIndicator.toggleFlag(Position.of({x: 0, y: 0}));
@@ -29,9 +29,8 @@ describe('MineIndicator', () => {
     describe('Removing a flag', () => {
         it('publishes an event when a position is removed', () => {
             const flagRemovedCallback = jest.fn();
-            const eventPublisher = eventPublisherBuilder()
-                .listen(MineIndicator.events.flagRemoved, flagRemovedCallback)
-                .build();
+            const eventPublisher = createEventHandler()
+            eventPublisher.listen(MineIndicator.events.flagRemoved, flagRemovedCallback);
             const mineIndicator = new MineIndicator(eventPublisher);
             const mineIndicatorAfterToggle = mineIndicator
                 .toggleFlag(Position.of({x: 0, y: 0}))
@@ -41,7 +40,7 @@ describe('MineIndicator', () => {
         });
 
         it('marks as not flagged', () => {
-            const eventPublisher = eventPublisherBuilder().build();
+            const eventPublisher = createEventHandler();
             const mineIndicator = new MineIndicator(eventPublisher);
 
             const mineIndicatorAfterToggle = mineIndicator

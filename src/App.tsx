@@ -2,21 +2,19 @@ import React, {useState} from 'react';
 import './App.css';
 import {LevelSelector} from "./components/levelSelector/LevelSelector";
 import {Minesweeper} from "./domain/minesweeper/minesweeper";
-import {EventPublisher} from "./domain/events/events";
 import {GameBoard} from "./components/board/GameBoard";
-import {eventPublisherBuilder} from "./infrastructure/events/eventPublisher";
+import {createEventHandler} from "./infrastructure/events/eventHandler";
 import {CreateMinesweeperService} from "./domain/minesweeper/services/createMinesweeperService";
 
 const App: React.FC = () => {
     const [game, setGame] = useState<Minesweeper>();
 
-    const eventPublisher: EventPublisher = eventPublisherBuilder()
-        .listen(Minesweeper.events.created, setGame)
-        .listen(Minesweeper.events.started, setGame)
-        .listen(Minesweeper.events.revealed, setGame)
-        .listen(Minesweeper.events.gameOver, setGame)
-        .listen(Minesweeper.events.finished, setGame)
-        .build();
+    const eventPublisher = createEventHandler();
+    eventPublisher.listen(Minesweeper.events.created, setGame);
+    eventPublisher.listen(Minesweeper.events.started, setGame);
+    eventPublisher.listen(Minesweeper.events.revealed, setGame);
+    eventPublisher.listen(Minesweeper.events.gameOver, setGame);
+    eventPublisher.listen(Minesweeper.events.finished, setGame);
 
     const createMinesweeperService = new CreateMinesweeperService(eventPublisher);
 
