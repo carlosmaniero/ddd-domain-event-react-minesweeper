@@ -116,6 +116,31 @@ describe('App Integration test', () => {
       expect(queryByText("Game Over!"))
           .not.toBeNull();
     });
+
+    it('shows game is finished', () => {
+      const eventHandler = createEventHandler();
+
+      const {queryByText} = render(
+          <EventHandlerContext.Provider value={eventHandler}>
+            <App/>
+          </EventHandlerContext.Provider>);
+
+      act(() => {
+        minesweeperFactory(eventHandler,
+            () => (coordinate) =>
+                coordinate.isPresent([
+                    Coordinate.of({x: 0, y: 0}),
+                  Coordinate.of({x: 3, y: 2})
+                ])
+                ? MineType.NotMine : MineType.Mine
+        )(GameLevel.EASY)
+            .revealCoordinate(Coordinate.of({x: 0, y: 0}))
+            .revealCoordinate(Coordinate.of({x: 3, y: 2}));
+      });
+
+      expect(queryByText("You Win!"))
+          .not.toBeNull();
+    });
   });
 });
 

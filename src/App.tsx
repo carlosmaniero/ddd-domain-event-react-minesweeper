@@ -7,6 +7,7 @@ import {CreateMinesweeperService} from "./domain/minesweeper/services/createMine
 import {anyOf} from "./domain/events/events";
 import {GameBoard} from "./components/board/GameBoard";
 import {GameOver} from "./components/gameStatus/gameOver";
+import {GameWin} from "./components/gameStatus/gameWin";
 
 const App: React.FC = () => {
     const [minesweeper, setMinesweeper] = useState<Minesweeper>();
@@ -19,7 +20,8 @@ const App: React.FC = () => {
                 Minesweeper.events.created,
                 Minesweeper.events.started,
                 Minesweeper.events.revealed,
-                Minesweeper.events.gameOver
+                Minesweeper.events.gameOver,
+                Minesweeper.events.finished
             ]), setMinesweeper);
         return () => eventPublisher.unsubscribe(eventPublisherSubscriptionID);
     }, [eventPublisher]);
@@ -29,6 +31,7 @@ const App: React.FC = () => {
             {!minesweeper && <LevelSelector onSelect={(gameLevel) => createMinesweeperService.create(gameLevel)}/>}
             {minesweeper && <GameBoard game={minesweeper} />}
             {minesweeper && minesweeper.isGameOver() && <GameOver />}
+            {minesweeper && minesweeper.isFinished() && <GameWin />}
         </div>
     );
 };

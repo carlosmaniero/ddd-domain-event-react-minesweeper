@@ -13,6 +13,7 @@ import {GameCoordinateButton} from "../components/board/GameCoordinateButton";
 import {GameLevel, getAllGameLevels} from "../domain/minesweeper/gameLevel";
 import {GameOver} from "../components/gameStatus/gameOver";
 import {storiesOf} from "@storybook/react";
+import {GameWin} from "../components/gameStatus/gameWin";
 
 const eventPublisherLog = {
     publish: action('eventPublished')
@@ -80,5 +81,6 @@ storiesOf('Game Coordinate', module)
         onClick={action('clicked')}
         boardCoordinate={{type: 'REVEALED_WITH_BOMB_NEAR', bombCount: 8, coordinate: Coordinate.of({x: 0, y: 0})}} />);
 
-storiesOf('Game Over', module)
-    .add(`Game Coordinate`, () => <GameOver />);
+storiesOf('Game Status', module)
+    .add(`Game Over`, () => <GameOver />)
+    .add(`Game Win`, () => <GameWin />);
