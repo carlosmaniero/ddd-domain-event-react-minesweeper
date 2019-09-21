@@ -5,7 +5,7 @@ import {fireEvent, render} from "@testing-library/react";
 import {createEventHandler} from "./infrastructure/events/eventHandler";
 import {Minesweeper, minesweeperFactory} from "./domain/minesweeper/minesweeper";
 import {act} from "react-dom/test-utils";
-import {Position} from "./domain/position/position";
+import {Coordinate} from "./domain/coordinate/coordinate";
 import {MineType} from "./domain/minesweeper/board/mine";
 import {GameLevel} from "./domain/minesweeper/gameLevel";
 
@@ -58,7 +58,7 @@ describe('App Integration test', () => {
         eventHandler.publish(Minesweeper.events.created(minesweeper));
       });
 
-      expect(queryByLabelText("Position 1x1")).not.toBeNull();
+      expect(queryByLabelText("Coordinate 1x1")).not.toBeNull();
     });
 
     it('Shows a started minesweeper', () => {
@@ -72,14 +72,14 @@ describe('App Integration test', () => {
       act(() => {
         const minesweeper = minesweeperFactory(eventHandler)(GameLevel.EASY);
         eventHandler.publish(Minesweeper.events.created(minesweeper));
-        minesweeper.revealPosition(Position.of({x: 0, y: 0}));
+        minesweeper.revealCoordinate(Coordinate.of({x: 0, y: 0}));
       });
 
-      expect(queryByLabelText('Position 1x1 reveled with no bomb near'))
+      expect(queryByLabelText('Coordinate 1x1 reveled with no bomb near'))
           .not.toBeNull();
     });
 
-    it('revels a position', () => {
+    it('revels a coordinate', () => {
       const eventHandler = createEventHandler();
 
       const {queryByLabelText} = render(
@@ -89,11 +89,11 @@ describe('App Integration test', () => {
 
       act(() => {
         minesweeperFactory(eventHandler, oddMineGenerator)(GameLevel.EASY)
-            .revealPosition(Position.of({x: 0, y: 0}))
-            .revealPosition(Position.of({x: 2, y: 2}));
+            .revealCoordinate(Coordinate.of({x: 0, y: 0}))
+            .revealCoordinate(Coordinate.of({x: 2, y: 2}));
       });
 
-      expect(queryByLabelText('Position 3x3 reveled with 6 bombs near'))
+      expect(queryByLabelText('Coordinate 3x3 reveled with 6 bombs near'))
           .not.toBeNull();
     });
 
@@ -109,8 +109,8 @@ describe('App Integration test', () => {
 
       act(() => {
         minesweeperFactory(eventHandler, oddMineGenerator)(GameLevel.EASY)
-            .revealPosition(Position.of({x: 0, y: 0}))
-            .revealPosition(Position.of({x: 3, y: 1}));
+            .revealCoordinate(Coordinate.of({x: 0, y: 0}))
+            .revealCoordinate(Coordinate.of({x: 3, y: 1}));
       });
 
       expect(queryByText("Game Over!"))
@@ -119,4 +119,4 @@ describe('App Integration test', () => {
   });
 });
 
-const oddMineGenerator = () => (position: Position) => position.x % 2 === 1 ? MineType.Mine : MineType.NotMine;
+const oddMineGenerator = () => (coordinate: Coordinate) => coordinate.x % 2 === 1 ? MineType.Mine : MineType.NotMine;

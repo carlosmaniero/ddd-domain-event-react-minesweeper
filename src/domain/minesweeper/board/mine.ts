@@ -1,4 +1,4 @@
-import {Position} from '../../position/position';
+import {Coordinate} from '../../coordinate/coordinate';
 
 export enum MineType {
     Mine = 'Mine',
@@ -7,14 +7,14 @@ export enum MineType {
 
 type NumberGenerator = () => number;
 
-export type MineCreator = (position: Position) => MineType;
-export type MineFactory = (initialPosition: Position, probability: number, numberGenerator?: NumberGenerator) => MineCreator
+export type MineCreator = (coordinate: Coordinate) => MineType;
+export type MineFactory = (initialCoordinate: Coordinate, probability: number, numberGenerator?: NumberGenerator) => MineCreator
 
-export const mineCreatorFactory: MineFactory = (initialPosition: Position, probability: number, numberGenerator: NumberGenerator = Math.random): MineCreator => {
-    const isInitialPosition = (position: Position) => position.sameOf(initialPosition);
-    const isAdjacent = (position: Position) => position.isAdjacentOf(initialPosition);
+export const mineCreatorFactory: MineFactory = (initialCoordinate: Coordinate, probability: number, numberGenerator: NumberGenerator = Math.random): MineCreator => {
+    const isInitialCoordinate = (coordinate: Coordinate) => coordinate.sameOf(initialCoordinate);
+    const isAdjacent = (coordinate: Coordinate) => coordinate.isAdjacentOf(initialCoordinate);
     const attendToProbability = () => numberGenerator() <= probability;
-    const isMine = (position: Position) => !isInitialPosition(position) && !isAdjacent(position) && attendToProbability();
+    const isMine = (coordinate: Coordinate) => !isInitialCoordinate(coordinate) && !isAdjacent(coordinate) && attendToProbability();
 
-    return (position: Position) => isMine(position) ? MineType.Mine : MineType.NotMine;
+    return (coordinate: Coordinate) => isMine(coordinate) ? MineType.Mine : MineType.NotMine;
 };

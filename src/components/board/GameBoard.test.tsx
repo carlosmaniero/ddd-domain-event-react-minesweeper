@@ -2,7 +2,7 @@ import {GameBoard} from "./GameBoard";
 import {fireEvent, render} from "@testing-library/react";
 import {minesweeperFactory} from "../../domain/minesweeper/minesweeper";
 import React from "react";
-import {Position} from "../../domain/position/position";
+import {Coordinate} from "../../domain/coordinate/coordinate";
 import {MineType} from "../../domain/minesweeper/board/mine";
 import {createEventHandler} from "../../infrastructure/events/eventHandler";
 import {GameLevel} from "../../domain/minesweeper/gameLevel";
@@ -24,29 +24,29 @@ describe('GameBoard', () => {
 
     it('starts a game at the first click', () => {
         const game = minesweeperFactory(createEventHandler())(GameLevel.EASY);
-        const startGameSpy = jest.spyOn(game, 'revealPosition');
+        const startGameSpy = jest.spyOn(game, 'revealCoordinate');
 
         const {getByLabelText} = render(<GameBoard game={game}/>);
-        fireEvent.click(getByLabelText('Position 6x9'));
+        fireEvent.click(getByLabelText('Coordinate 6x9'));
 
-        expect(startGameSpy).toBeCalledWith(Position.of({x: 5, y: 8}));
+        expect(startGameSpy).toBeCalledWith(Coordinate.of({x: 5, y: 8}));
     });
 
-    it('revels the selected position without bombs', () => {
+    it('revels the selected coordinate without bombs', () => {
         const game = minesweeperFactory(createEventHandler(), () => () => MineType.NotMine)(GameLevel.EASY);
-        const gameWithRevealedPosition = game.revealPosition(Position.of({x: 5, y: 8}));
-        const {queryByLabelText} = render(<GameBoard game={gameWithRevealedPosition}/>);
+        const gameWithRevealedCoordinate = game.revealCoordinate(Coordinate.of({x: 5, y: 8}));
+        const {queryByLabelText} = render(<GameBoard game={gameWithRevealedCoordinate}/>);
 
-        expect(queryByLabelText('Position 6x9 reveled with no bomb near'))
+        expect(queryByLabelText('Coordinate 6x9 reveled with no bomb near'))
             .not.toBeNull();
     });
 
-    it('revels the selected position with bombs', () => {
+    it('revels the selected coordinate with bombs', () => {
         const game = minesweeperFactory(createEventHandler(), () => () => MineType.Mine)(GameLevel.EASY);
-        const gameWithRevealedPosition = game.revealPosition(Position.of({x: 2, y: 2}));
-        const {getByLabelText} = render(<GameBoard game={gameWithRevealedPosition}/>);
+        const gameWithRevealedCoordinate = game.revealCoordinate(Coordinate.of({x: 2, y: 2}));
+        const {getByLabelText} = render(<GameBoard game={gameWithRevealedCoordinate}/>);
 
-        const revealedPosition = getByLabelText('Position 3x3 reveled with 8 bombs near');
-        expect(revealedPosition.innerHTML).toBe('8');
+        const revealedCoordinate = getByLabelText('Coordinate 3x3 reveled with 8 bombs near');
+        expect(revealedCoordinate.innerHTML).toBe('8');
     });
 });

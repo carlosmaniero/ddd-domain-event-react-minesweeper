@@ -1,15 +1,15 @@
 import {Event, eventCreator, EventPublisher} from "../events/events";
-import {Position} from '../position/position'
+import {Coordinate} from '../coordinate/coordinate'
 import {mineCreatorFactory, MineFactory} from "./board/mine";
 import {createGameBoard, GameBoard} from "./board/gameBoard";
 import {GameLevelSettings, gameLevelSettings} from "../settings";
 import {RevealedBoard} from "./board/RevealedBoard";
 import {
-    BoardPosition,
-    createNotRevealedPosition,
-    createRevealedPositionWithBombs,
-    createRevealedPositionWithoutBombs
-} from "../position/boardPosition";
+    BoardCoordinate,
+    createNotRevealedCoordinate,
+    createRevealedCoordinateWithBombs,
+    createRevealedCoordinateWithoutBombs
+} from "../coordinate/boardCoordinate";
 import {GameLevel} from "./gameLevel";
 
 const range = (size: number) => Array.from({length: size}, (_, index) => index);
@@ -46,30 +46,30 @@ export class Minesweeper {
         return this.gameLevelSettings.boardSize;
     }
 
-    public boardPositions(): BoardPosition[] {
-        return range(this.boardTotalPositions())
-            .map((index) => this.positionFromIndex(index))
-            .map((position) => this.boardPosition(position));
+    public boardCoordinates(): BoardCoordinate[] {
+        return range(this.boardTotalCoordinates())
+            .map((index) => this.coordinateFromIndex(index))
+            .map((coordinate) => this.boardCoordinate(coordinate));
     }
 
-    public revealPosition(position: Position): Minesweeper {
+    public revealCoordinate(coordinate: Coordinate): Minesweeper {
         if (this.isGameOver() || this.isFinished()) {
             return this;
         }
 
         if (!this.board) {
-            return this.startGame(position);
+            return this.startGame(coordinate);
         }
 
-        if (this.board.isBomb(position)) {
+        if (this.board.isBomb(coordinate)) {
             return this.gameOver();
         }
 
-        return this.handleRevelPosition(position, this.board);
+        return this.handleRevelCoordinate(coordinate, this.board);
     }
 
-    private handleRevelPosition(position: Position, board: GameBoard) {
-        const revealedBoard = this.revealedBoard.reveal(position, board);
+    private handleRevelCoordinate(coordinate: Coordinate, board: GameBoard) {
+        const revealedBoard = this.revealedBoard.reveal(coordinate, board);
 
         let reveledGame = new Minesweeper(
             this.eventPublisher,
@@ -97,37 +97,37 @@ export class Minesweeper {
         return MinesweeperState.Finished;
     }
 
-    private boardTotalPositions() {
+    private boardTotalCoordinates() {
         return this.boardSize().width * this.boardSize().height;
     }
 
-    private boardPosition(position: Position): BoardPosition {
-        if (!this.revealedBoard.isRevealed(position) || !this.board) {
-            return createNotRevealedPosition(position);
+    private boardCoordinate(coordinate: Coordinate): BoardCoordinate {
+        if (!this.revealedBoard.isRevealed(coordinate) || !this.board) {
+            return createNotRevealedCoordinate(coordinate);
         }
 
-        if (this.board.hasBombNear(position)) {
-            return createRevealedPositionWithBombs(position, this.board.nearBombCount(position));
+        if (this.board.hasBombNear(coordinate)) {
+            return createRevealedCoordinateWithBombs(coordinate, this.board.nearBombCount(coordinate));
         }
 
-        return createRevealedPositionWithoutBombs(position);
+        return createRevealedCoordinateWithoutBombs(coordinate);
     }
 
-    private positionFromIndex(index: number) {
-        return Position.of({
+    private coordinateFromIndex(index: number) {
+        return Coordinate.of({
             x: index % this.boardSize().width,
             y: Math.trunc(index / this.boardSize().width)
         });
     }
 
-    private startGame(position: Position) {
-        const board = this.createBoard(position);
+    private startGame(coordinate: Coordinate) {
+        const board = this.createBoard(coordinate);
 
         const startedGame = new Minesweeper(
             this.eventPublisher,
             this.mineFactory,
             this.gameLevel,
-            this.revealedBoard.reveal(position, board),
+            this.revealedBoard.reveal(coordinate, board),
             board,
             MinesweeperState.Started
         );
@@ -136,8 +136,8 @@ export class Minesweeper {
         return startedGame;
     }
 
-    private createBoard(position: Position) {
-        const mineCreator = this.mineFactory(position, this.gameLevelSettings.mineProbability);
+    private createBoard(coordinate: Coordinate) {
+        const mineCreator = this.mineFactory(coordinate, this.gameLevelSettings.mineProbability);
         return createGameBoard(mineCreator)(this.boardSize());
     }
 

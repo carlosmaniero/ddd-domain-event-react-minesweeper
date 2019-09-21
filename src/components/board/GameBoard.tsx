@@ -1,8 +1,8 @@
 import React, {useState} from "react";
 import styled from "styled-components";
-import {GamePositionButton, GamePositionProps} from "./GamePositionButton";
+import {GameCoordinateButton, GameCoordinateProps} from "./GameCoordinateButton";
 import {Minesweeper} from "../../domain/minesweeper/minesweeper";
-import {Position} from "../../domain/position/position";
+import {Coordinate} from "../../domain/coordinate/coordinate";
 
 export interface GameBoardProps {
     game: Minesweeper
@@ -23,33 +23,33 @@ const GameBoardGrid = styled.section`
   grid-template-rows: repeat(${(props: GameBoardGridProps) => props.height}, 1fr);
 `;
 
-type GamePositionButtonHighlightedProps = GamePositionProps & {
-    highlightedPositions :Position[]
+type GameCoordinateButtonHighlightedProps = GameCoordinateProps & {
+    highlightedCoordinates :Coordinate[]
 }
 
-const getHighlightedColor = (props: GamePositionButtonHighlightedProps) => {
-    if (props.highlightedPositions.some(position => position.sameOf(props.boardPosition.position))) {
+const getHighlightedColor = (props: GameCoordinateButtonHighlightedProps) => {
+    if (props.highlightedCoordinates.some(coordinate => coordinate.sameOf(props.boardCoordinate.coordinate))) {
         return '#a3b6d2'
     }
     return '#d1dbf0';
 };
 
-export const GamePositionButtonHighlighted = styled(GamePositionButton)`
+export const GameCoordinateButtonHighlighted = styled(GameCoordinateButton)`
   border: 2px solid ${getHighlightedColor};
   transition: border 0.25s linear;
 `;
 
 export const GameBoard = ({game}: GameBoardProps) => {
-    const [highlightedPositions, setPositions] = useState<Position[]>([]);
+    const [highlightedCoordinates, setCoordinates] = useState<Coordinate[]>([]);
 
     return <GameBoardGrid {...game.boardSize()}>
         {
-            game.boardPositions().map((boardPosition, index) =>
-                <GamePositionButtonHighlighted
-                    highlightedPositions={highlightedPositions}
-                    onMouseEnter={() => setPositions(boardPosition.position.getAdjacent())}
-                    onClick={() => game.revealPosition(boardPosition.position)}
-                    boardPosition={boardPosition} key={index}/>)
+            game.boardCoordinates().map((boardCoordinate, index) =>
+                <GameCoordinateButtonHighlighted
+                    highlightedCoordinates={highlightedCoordinates}
+                    onMouseEnter={() => setCoordinates(boardCoordinate.coordinate.getAdjacent())}
+                    onClick={() => game.revealCoordinate(boardCoordinate.coordinate)}
+                    boardCoordinate={boardCoordinate} key={index}/>)
         }
     </GameBoardGrid>
 };

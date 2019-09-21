@@ -1,5 +1,5 @@
 import {eventCreator, EventPublisher} from "../events/events";
-import {Position} from "../position/position";
+import {Coordinate} from "../coordinate/coordinate";
 
 export class MineIndicator {
     static events = {
@@ -9,33 +9,33 @@ export class MineIndicator {
 
     public constructor(
         private readonly eventPublisher: EventPublisher,
-        private readonly positions: Position[] = []
+        private readonly coordinates: Coordinate[] = []
     ) {}
 
-    public toggleFlag(position: Position) {
-        if (this.isFlagged(position)) {
-            return this.removeFlag(position);
+    public toggleFlag(coordinate: Coordinate) {
+        if (this.isFlagged(coordinate)) {
+            return this.removeFlag(coordinate);
         }
-        return this.addFlag(position);
+        return this.addFlag(coordinate);
     }
 
-    private addFlag(position: Position) {
-        const positions = [...this.positions, position];
-        const newMineIndicator = new MineIndicator(this.eventPublisher, positions);
+    private addFlag(coordinate: Coordinate) {
+        const coordinates = [...this.coordinates, coordinate];
+        const newMineIndicator = new MineIndicator(this.eventPublisher, coordinates);
 
         this.eventPublisher.publish(MineIndicator.events.flagAdded(newMineIndicator));
         return newMineIndicator;
     }
 
-    private removeFlag(position: Position) {
-        const positions = this.positions.filter((addedPosition) => !addedPosition.sameOf(position));
-        const newMineIndicator = new MineIndicator(this.eventPublisher, positions);
+    private removeFlag(coordinate: Coordinate) {
+        const coordinates = this.coordinates.filter((addedCoordinate) => !addedCoordinate.sameOf(coordinate));
+        const newMineIndicator = new MineIndicator(this.eventPublisher, coordinates);
 
         this.eventPublisher.publish(MineIndicator.events.flagRemoved(newMineIndicator));
         return newMineIndicator;
     }
 
-    public isFlagged(position: Position) {
-        return this.positions.some((addedPosition) => addedPosition.sameOf(position));
+    public isFlagged(coordinate: Coordinate) {
+        return this.coordinates.some((addedCoordnate) => addedCoordnate.sameOf(coordinate));
     }
 }

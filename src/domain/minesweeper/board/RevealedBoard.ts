@@ -1,19 +1,19 @@
-import {Position} from "../../position/position";
+import {Coordinate} from "../../coordinate/coordinate";
 import {GameBoard} from "./gameBoard";
 
 export class RevealedBoard {
-    constructor(readonly revealedPositions: Array<Position> = []) {}
+    constructor(readonly revealedCoordinates: Coordinate[] = []) {}
 
-    public reveal(position: Position, board: GameBoard) {
-        const revealedPositions = this.isRevealed(position)
-            ? this.revealedPositions
-            : [...this.revealedPositions, position];
+    public reveal(coordinate: Coordinate, board: GameBoard) {
+        const revealedCoordinates = this.isRevealed(coordinate)
+            ? this.revealedCoordinates
+            : [...this.revealedCoordinates, coordinate];
 
-        return new RevealedBoard(this.propagateReveal(revealedPositions, position, board, 5))
+        return new RevealedBoard(this.propagateReveal(revealedCoordinates, coordinate, board, 5))
     }
 
-    public isRevealed(position: Position) {
-        return this.revealedPositions.some(revealedPosition => revealedPosition.sameOf(position));
+    public isRevealed(coordinate: Coordinate) {
+        return this.revealedCoordinates.some(revealedCoordinate => revealedCoordinate.sameOf(coordinate));
     }
 
     public hasUnrevealedBombs(board: GameBoard) {
@@ -21,27 +21,27 @@ export class RevealedBoard {
     }
 
     private totalUnrevealed(board: GameBoard) {
-        return (board.getHeight() * board.getWidth()) - this.revealedPositions.length;
+        return (board.getHeight() * board.getWidth()) - this.revealedCoordinates.length;
     }
 
-    private propagateReveal(revealedPositions: Position[], position: Position, board: GameBoard, depth: number): Position[] {
+    private propagateReveal(revealedCoordinate: Coordinate[], coordinate: Coordinate, board: GameBoard, depth: number): Coordinate[] {
         if (depth === 0) {
-            return revealedPositions;
+            return revealedCoordinate;
         }
-        if (board.hasBombNear(position)) {
-            return revealedPositions;
+        if (board.hasBombNear(coordinate)) {
+            return revealedCoordinate;
         }
 
-        const nonBombPositions: Position[] = position.getAdjacent()
-            .filter((adjacentPosition) => board.containsPosition(adjacentPosition))
-            .filter((adjacentPosition) => !board.isBomb(adjacentPosition));
+        const nonBombCoordinates: Coordinate[] = coordinate.getAdjacent()
+            .filter((adjacentCoordinate) => board.containsCoordinate(adjacentCoordinate))
+            .filter((adjacentCoordinate) => !board.isBomb(adjacentCoordinate));
 
-        const nomBombNearPositions = nonBombPositions
-            .filter((nonBombPosition) => !board.hasBombNear(nonBombPosition))
-            .flatMap((nonBombPositions) => this.propagateReveal(revealedPositions, nonBombPositions, board, depth - 1));
+        const nomBombNearCoordinates = nonBombCoordinates
+            .filter((nonBombCoordinate) => !board.hasBombNear(nonBombCoordinate))
+            .flatMap((nonBombCoordinates) => this.propagateReveal(revealedCoordinate, nonBombCoordinates, board, depth - 1));
 
-        return [...revealedPositions, ...nonBombPositions, ...nomBombNearPositions]
-            .reduce((positions: Position[], position: Position) =>
-                position.isPresent(positions) ? positions : [...positions, position], []);
+        return [...revealedCoordinate, ...nonBombCoordinates, ...nomBombNearCoordinates]
+            .reduce((coordinates: Coordinate[], coordinate: Coordinate) =>
+                coordinate.isPresent(coordinates) ? coordinates : [...coordinates, coordinate], []);
     }
 }

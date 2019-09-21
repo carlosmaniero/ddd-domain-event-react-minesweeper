@@ -1,5 +1,5 @@
 import {MineCreator, MineType} from "./mine";
-import {Position} from "../../position/position";
+import {Coordinate} from "../../coordinate/coordinate";
 
 export interface BoardSize {
     width: number;
@@ -11,18 +11,18 @@ export class GameBoard {
         this.board = board;
     }
 
-    public nearBombCount(position: Position) {
-        return this.getAdjacent(position)
+    public nearBombCount(coordinate: Coordinate) {
+        return this.getAdjacent(coordinate)
             .filter(mineType => mineType === MineType.Mine)
             .length;
     }
 
-    public isBomb(position: Position) {
-        return this.getByPosition(position) === MineType.Mine;
+    public isBomb(coordinate: Coordinate) {
+        return this.getByCoordinate(coordinate) === MineType.Mine;
     }
 
-    public hasBombNear(position: Position) {
-        return this.nearBombCount(position) > 0;
+    public hasBombNear(coordinate: Coordinate) {
+        return this.nearBombCount(coordinate) > 0;
     }
 
     public getWidth() {
@@ -39,21 +39,21 @@ export class GameBoard {
             .length;
     }
 
-    private getAdjacent(position: Position): MineType[] {
-        return position.getAdjacent()
-            .map((position) => this.getByPosition(position));
+    private getAdjacent(coordinate: Coordinate): MineType[] {
+        return coordinate.getAdjacent()
+            .map((coordinate) => this.getByCoordinate(coordinate));
     }
 
-    private getByPosition(position: Position): MineType {
-        let boardElement = this.board[position.y];
-        return boardElement ? boardElement[position.x] : MineType.NotMine;
+    private getByCoordinate(coordinate: Coordinate): MineType {
+        let boardElement = this.board[coordinate.y];
+        return boardElement ? boardElement[coordinate.x] : MineType.NotMine;
     }
 
-    containsPosition(position: Position) {
-        if (position.y < 0 || position.x < 0) {
+    containsCoordinate(coordinate: Coordinate) {
+        if (coordinate.y < 0 || coordinate.x < 0) {
             return false;
         }
-        return position.y < this.getHeight() && position.x < this.getWidth();
+        return coordinate.y < this.getHeight() && coordinate.x < this.getWidth();
     }
 }
 
@@ -64,7 +64,7 @@ type BoardLineCreator = (line: number) => MineType[];
 const range = (size: number) => Array.from({length: size}, (_, index) => index);
 
 const boardLineCreatorFor = (mineCreator: MineCreator, width: number): BoardLineCreator => (line: number) =>
-    range(width).map(column => mineCreator(Position.of({x: column, y: line})));
+    range(width).map(column => mineCreator(Coordinate.of({x: column, y: line})));
 
 const createBoard = (boardLineCreator: BoardLineCreator, height: number) =>
     range(height).map(boardLineCreator);
