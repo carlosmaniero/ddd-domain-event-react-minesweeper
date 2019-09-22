@@ -74,7 +74,7 @@ describe('Game', () => {
                 const game = createGame(GameLevel.EASY);
                 const startedGame = game.sweep(revealedCoordinate);
 
-                expect(startedGame.isCleaned(revealedCoordinate)).toBeTruthy();
+                expect(startedGame.isSwept(revealedCoordinate)).toBeTruthy();
             });
 
             it('revel a coordinate with mine near', () => {
@@ -85,7 +85,7 @@ describe('Game', () => {
                 const game = createGame(GameLevel.EASY);
                 const startedGame = game.sweep(revealedCoordinate);
 
-                expect(startedGame.isCleaned(revealedCoordinate)).toBeTruthy();
+                expect(startedGame.isSwept(revealedCoordinate)).toBeTruthy();
                 expect(startedGame.hasBombNear(revealedCoordinate)).toBeTruthy();
                 expect(startedGame.bombCount(revealedCoordinate)).toEqual(8);
             });
@@ -123,7 +123,7 @@ describe('Game', () => {
                     .sweep(Coordinate.of({x: 2, y: 2}));
 
                 expect(startedGame.hasBombNear(Coordinate.of({x: 2, y: 2}))).toBeFalsy();
-                expect(startedGame.isCleaned(Coordinate.of({x: 2, y: 2}))).toBeTruthy();
+                expect(startedGame.isSwept(Coordinate.of({x: 2, y: 2}))).toBeTruthy();
             });
         });
     });
@@ -220,7 +220,7 @@ describe('Game', () => {
                 .sweep(initialCoordinate)
                 .sweep(finishingCoordinate);
 
-            expect(revealCoordinateGame.completelyCleaned()).toBeTruthy();
+            expect(revealCoordinateGame.completelySweptAway()).toBeTruthy();
         });
 
         it('does not allows bomb reveal after game finishes', () => {

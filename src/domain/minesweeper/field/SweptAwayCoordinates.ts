@@ -1,15 +1,15 @@
 import {Coordinate} from "../../coordinate/coordinate";
 import {Field} from "./field";
 
-export class CleanedBoard {
+export class SweptAwayCoordinates {
     constructor(readonly revealedCoordinates: Coordinate[] = []) {}
 
-    public clean(coordinate: Coordinate, board: Field) {
+    public sweep(coordinate: Coordinate, board: Field) {
         const revealedCoordinates = this.isRevealed(coordinate)
             ? this.revealedCoordinates
             : [...this.revealedCoordinates, coordinate];
 
-        return new CleanedBoard(this.propagateReveal(revealedCoordinates, coordinate, board, 5))
+        return new SweptAwayCoordinates(this.propagateReveal(revealedCoordinates, coordinate, board, 5))
     }
 
     public isRevealed(coordinate: Coordinate) {

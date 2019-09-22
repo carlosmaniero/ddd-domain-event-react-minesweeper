@@ -1,6 +1,6 @@
 import {Field} from "./field";
 import {MineType} from "./mine";
-import {CleanedBoard} from "./CleanedBoard";
+import {SweptAwayCoordinates} from "./SweptAwayCoordinates";
 import {Coordinate} from "../../coordinate/coordinate";
 
 describe('RevealedBoard', () => {
@@ -13,8 +13,8 @@ describe('RevealedBoard', () => {
             [MineType.NotMine, MineType.NotMine, MineType.NotMine, MineType.NotMine]
         ]);
 
-        const revealBoard = new CleanedBoard();
-        const afterRevealAll = revealBoard.clean(Coordinate.of({x: 0, y: 0}), board);
+        const revealBoard = new SweptAwayCoordinates();
+        const afterRevealAll = revealBoard.sweep(Coordinate.of({x: 0, y: 0}), board);
 
         expect(afterRevealAll.hasUnrevealedBombs(board)).toBeFalsy();
     });

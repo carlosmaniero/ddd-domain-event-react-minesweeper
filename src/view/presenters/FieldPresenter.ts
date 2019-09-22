@@ -31,7 +31,7 @@ export class FieldPresenter {
     }
 
     private boardCoordinate(coordinate: Coordinate): BoardCoordinate {
-        if (!this.minesweeper.isCleaned(coordinate)) {
+        if (!this.minesweeper.isSwept(coordinate)) {
             return createNotRevealedCoordinate(coordinate);
         }
 
