@@ -1,8 +1,8 @@
 import React, {useState} from "react";
 import styled from "styled-components";
 import {GameCoordinateButton, GameCoordinateProps} from "./GameCoordinateButton";
-import {Minesweeper} from "../../domain/minesweeper/minesweeper";
-import {Coordinate} from "../../domain/coordinate/coordinate";
+import {Minesweeper} from "../../../domain/minesweeper/minesweeper";
+import {Coordinate} from "../../../domain/coordinate/coordinate";
 
 export interface GameBoardProps {
     game: Minesweeper

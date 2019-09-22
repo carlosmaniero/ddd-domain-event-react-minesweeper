@@ -2,18 +2,18 @@ import React from 'react';
 
 import {action} from '@storybook/addon-actions';
 
-import {RegularButton} from "../components/designSystem/buttons/RegularButton";
-import {LevelButton} from "../components/levelSelector/LevelButton";
+import {RegularButton} from "../view/components/designSystem/buttons/RegularButton";
+import {LevelButton} from "../view/components/levelSelector/LevelButton";
 import {minesweeperFactory} from "../domain/minesweeper/minesweeper";
-import {LevelSelector} from "../components/levelSelector/LevelSelector";
-import {GameBoard} from "../components/board/GameBoard";
+import {LevelSelector} from "../view/components/levelSelector/LevelSelector";
+import {GameBoard} from "../view/components/board/GameBoard";
 import {MineType} from "../domain/minesweeper/field/mine";
 import {Coordinate} from "../domain/coordinate/coordinate";
-import {GameCoordinateButton} from "../components/board/GameCoordinateButton";
+import {GameCoordinateButton} from "../view/components/board/GameCoordinateButton";
 import {GameLevel, getAllGameLevels} from "../domain/minesweeper/gameLevel";
-import {GameOver} from "../components/gameStatus/gameOver";
+import {GameOver} from "../view/components/gameStatus/gameOver";
 import {storiesOf} from "@storybook/react";
-import {GameWin} from "../components/gameStatus/gameWin";
+import {GameWin} from "../view/components/gameStatus/gameWin";
 
 const eventPublisherLog = {
     publish: action('eventPublished')

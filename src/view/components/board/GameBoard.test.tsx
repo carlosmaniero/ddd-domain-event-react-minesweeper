@@ -1,11 +1,11 @@
 import {GameBoard} from "./GameBoard";
 import {fireEvent, render} from "@testing-library/react";
-import {minesweeperFactory} from "../../domain/minesweeper/minesweeper";
+import {minesweeperFactory} from "../../../domain/minesweeper/minesweeper";
 import React from "react";
-import {Coordinate} from "../../domain/coordinate/coordinate";
-import {MineType} from "../../domain/minesweeper/field/mine";
-import {createEventHandler} from "../../infrastructure/events/eventHandler";
-import {GameLevel} from "../../domain/minesweeper/gameLevel";
+import {Coordinate} from "../../../domain/coordinate/coordinate";
+import {MineType} from "../../../domain/minesweeper/field/mine";
+import {createEventHandler} from "../../../infrastructure/events/eventHandler";
+import {GameLevel} from "../../../domain/minesweeper/gameLevel";
 
 describe('GameBoard', () => {
 

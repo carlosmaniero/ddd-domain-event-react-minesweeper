@@ -1,6 +1,6 @@
 import React from 'react';
 import App from "./App";
-import {EventHandlerContext} from "./components/eventHandler/eventHandlerContext";
+import {EventHandlerContext} from "./view/components/eventHandler/eventHandlerContext";
 import {fireEvent, render} from "@testing-library/react";
 import {createEventHandler} from "./infrastructure/events/eventHandler";
 import {Minesweeper, minesweeperFactory} from "./domain/minesweeper/minesweeper";

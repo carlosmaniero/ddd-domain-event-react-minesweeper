@@ -1,12 +1,12 @@
 import styled from "styled-components";
 import React from "react";
-import {Coordinate} from "../../domain/coordinate/coordinate";
+import {Coordinate} from "../../../domain/coordinate/coordinate";
 import {
     BoardCoordinate,
     isRevealed,
     isRevealedWithBombsNear,
     isRevealedWithNoBombNear
-} from "../../domain/coordinate/boardCoordinate";
+} from "../../../domain/coordinate/boardCoordinate";
 
 interface GameCoordinateElementProps {
     boardCoordinate: BoardCoordinate
