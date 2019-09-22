@@ -4,15 +4,7 @@ import {mineCreatorFactory, MineFactory} from "./field/mine";
 import {createGameBoard, Field} from "./field/field";
 import {GameLevelSettings, gameLevelSettings} from "../settings";
 import {CleanedBoard} from "./field/CleanedBoard";
-import {
-    BoardCoordinate,
-    createNotRevealedCoordinate,
-    createRevealedCoordinateWithBombs,
-    createRevealedCoordinateWithoutBombs
-} from "../coordinate/boardCoordinate";
 import {GameLevel} from "./gameLevel";
-
-const range = (size: number) => Array.from({length: size}, (_, index) => index);
 
 enum MinesweeperState {
     NotStarted,
@@ -45,13 +37,6 @@ export class Minesweeper {
     public boardSize() {
         return this.gameLevelSettings.boardSize;
     }
-
-    public boardCoordinates(): BoardCoordinate[] {
-        return range(this.boardTotalCoordinates())
-            .map((index) => this.coordinateFromIndex(index))
-            .map((coordinate) => this.boardCoordinate(coordinate));
-    }
-
     public sweep(coordinate: Coordinate): Minesweeper {
         if (this.bombExploded() || this.completelyCleaned()) {
             return this;
@@ -97,27 +82,19 @@ export class Minesweeper {
         return MinesweeperState.Finished;
     }
 
-    private boardTotalCoordinates() {
-        return this.boardSize().width * this.boardSize().height;
+    public bombCount(coordinate: Coordinate) {
+        if (!this.field) {
+            return 0;
+        }
+        return this.field.nearBombCount(coordinate);
     }
 
-    private boardCoordinate(coordinate: Coordinate): BoardCoordinate {
-        if (!this.cleanedBoard.isRevealed(coordinate) || !this.field) {
-            return createNotRevealedCoordinate(coordinate);
-        }
-
-        if (this.field.hasBombNear(coordinate)) {
-            return createRevealedCoordinateWithBombs(coordinate, this.field.nearBombCount(coordinate));
-        }
-
-        return createRevealedCoordinateWithoutBombs(coordinate);
+    public hasBombNear(coordinate: Coordinate) {
+        return this.field && this.field.hasBombNear(coordinate);
     }
 
-    private coordinateFromIndex(index: number) {
-        return Coordinate.of({
-            x: index % this.boardSize().width,
-            y: Math.trunc(index / this.boardSize().width)
-        });
+    public isCleaned(coordinate: Coordinate) {
+        return this.field && this.cleanedBoard.isRevealed(coordinate);
     }
 
     private startGame(coordinate: Coordinate) {
@@ -159,11 +136,11 @@ export class Minesweeper {
         return gameOverMinesweeper;
     }
 
-    bombExploded(): boolean {
+    public bombExploded(): boolean {
         return this.state === MinesweeperState.GameOver;
     }
 
-    completelyCleaned() {
+    public completelyCleaned() {
         return this.state === MinesweeperState.Finished;
     }
 }

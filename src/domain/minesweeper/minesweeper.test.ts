@@ -74,11 +74,7 @@ describe('Game', () => {
                 const game = createGame(GameLevel.EASY);
                 const startedGame = game.sweep(revealedCoordinate);
 
-                const coordinate = startedGame.boardCoordinates()[13];
-                expect(coordinate).toEqual({
-                    type: 'REVEALED_WITH_NO_BOMB_NEAR',
-                    coordinate: revealedCoordinate
-                });
+                expect(startedGame.isCleaned(revealedCoordinate)).toBeTruthy();
             });
 
             it('revel a coordinate with mine near', () => {
@@ -88,13 +84,10 @@ describe('Game', () => {
                 const revealedCoordinate = Coordinate.of({x: 1, y: 2});
                 const game = createGame(GameLevel.EASY);
                 const startedGame = game.sweep(revealedCoordinate);
-                const coordinate = startedGame.boardCoordinates()[13];
 
-                expect(coordinate).toEqual({
-                    type: 'REVEALED_WITH_BOMB_NEAR',
-                    coordinate: revealedCoordinate,
-                    bombCount: 8
-                });
+                expect(startedGame.isCleaned(revealedCoordinate)).toBeTruthy();
+                expect(startedGame.hasBombNear(revealedCoordinate)).toBeTruthy();
+                expect(startedGame.bombCount(revealedCoordinate)).toEqual(8);
             });
         });
 
@@ -129,12 +122,8 @@ describe('Game', () => {
                     .sweep(Coordinate.of({x: 1, y: 2}))
                     .sweep(Coordinate.of({x: 2, y: 2}));
 
-                const coordinate = startedGame.boardCoordinates()[14];
-
-                expect(coordinate).toEqual({
-                    type: 'REVEALED_WITH_NO_BOMB_NEAR',
-                    coordinate: Coordinate.of({x: 2, y: 2})
-                });
+                expect(startedGame.hasBombNear(Coordinate.of({x: 2, y: 2}))).toBeFalsy();
+                expect(startedGame.isCleaned(Coordinate.of({x: 2, y: 2}))).toBeTruthy();
             });
         });
     });

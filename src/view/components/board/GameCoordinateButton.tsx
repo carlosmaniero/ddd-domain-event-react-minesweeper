@@ -6,7 +6,7 @@ import {
     isRevealed,
     isRevealedWithBombsNear,
     isRevealedWithNoBombNear
-} from "../../../domain/coordinate/boardCoordinate";
+} from "../../presenters/boardCoordinate";
 
 interface GameCoordinateElementProps {
     boardCoordinate: BoardCoordinate

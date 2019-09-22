@@ -3,6 +3,7 @@ import styled from "styled-components";
 import {GameCoordinateButton, GameCoordinateProps} from "./GameCoordinateButton";
 import {Minesweeper} from "../../../domain/minesweeper/minesweeper";
 import {Coordinate} from "../../../domain/coordinate/coordinate";
+import {FieldPresenter} from "../../presenters/FieldPresenter";
 
 export interface GameBoardProps {
     game: Minesweeper
@@ -44,7 +45,7 @@ export const GameBoard = ({game}: GameBoardProps) => {
 
     return <GameBoardGrid {...game.boardSize()}>
         {
-            game.boardCoordinates().map((boardCoordinate, index) =>
+            new FieldPresenter(game).boardCoordinates().map((boardCoordinate, index) =>
                 <GameCoordinateButtonHighlighted
                     highlightedCoordinates={highlightedCoordinates}
                     onMouseEnter={() => setCoordinates(boardCoordinate.coordinate.getAdjacent())}

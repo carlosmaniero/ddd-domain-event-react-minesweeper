@@ -1,4 +1,4 @@
-import {Coordinate} from "./coordinate";
+import {Coordinate} from "../../domain/coordinate/coordinate";
 
 type BoardCoordinateNotRevealed = {
     type: 'NOT_REVEALED',
