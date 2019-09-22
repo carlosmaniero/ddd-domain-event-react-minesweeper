@@ -16,6 +16,6 @@ describe('RevealedBoard', () => {
         const revealBoard = new SweptAwayCoordinates();
         const afterRevealAll = revealBoard.sweep(Coordinate.of({x: 0, y: 0}), board);
 
-        expect(afterRevealAll.hasUnrevealedBombs(board)).toBeFalsy();
+        expect(afterRevealAll.hasCoordinatesToBeSwept(board)).toBeFalsy();
     });
 });

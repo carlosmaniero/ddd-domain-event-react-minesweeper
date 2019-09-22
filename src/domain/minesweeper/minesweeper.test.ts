@@ -130,10 +130,13 @@ describe('minesweeper', () => {
     describe('minesweeper over', () => {
         it('publish an event', () => {
             const initialCoordinate = Coordinate.of({x: 0, y: 0});
+            const anyOtherCoordinate = Coordinate.of({x: 5, y: 2});
+
             const {publisher, createMinesweeper, mineFactory} = createminesweeperWithMockedDependencies();
 
             mineFactory.mockReturnValue((coordinate: Coordinate) =>
-                coordinate.sameOf(initialCoordinate) ? MineType.NotMine : MineType.Mine);
+                coordinate.sameOf(initialCoordinate) || coordinate.sameOf(anyOtherCoordinate)
+                    ? MineType.NotMine : MineType.Mine);
 
             const minesweeper = createMinesweeper(GameLevel.EASY);
 
@@ -145,19 +148,22 @@ describe('minesweeper', () => {
 
         it('marks it self as minesweeper over', () => {
             const initialCoordinate = Coordinate.of({x: 0, y: 0});
+            const anyOtherCoordinate = Coordinate.of({x: 5, y: 2});
+
             const {createMinesweeper, mineFactory} = createminesweeperWithMockedDependencies();
 
             mineFactory.mockReturnValue((coordinate: Coordinate) =>
-                coordinate.sameOf(initialCoordinate) ? MineType.NotMine : MineType.Mine);
+                coordinate.sameOf(initialCoordinate) || coordinate.sameOf(anyOtherCoordinate)
+                    ? MineType.NotMine : MineType.Mine);
 
             const minesweeper = createMinesweeper(GameLevel.EASY);
             minesweeper.sweep(initialCoordinate);
 
-            expect(minesweeper.bombExploded()).toBeFalsy();
+            expect(minesweeper.isSweeperDead()).toBeFalsy();
 
             minesweeper.sweep(Coordinate.of({x: 1, y: 1}));
 
-            expect(minesweeper.bombExploded()).toBeTruthy();
+            expect(minesweeper.isSweeperDead()).toBeTruthy();
         });
 
         it('prevents new reveals after a minesweeper over', () => {

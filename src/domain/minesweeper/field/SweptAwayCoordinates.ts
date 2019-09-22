@@ -16,11 +16,11 @@ export class SweptAwayCoordinates {
         return this.revealedCoordinates.some(revealedCoordinate => revealedCoordinate.sameOf(coordinate));
     }
 
-    public hasUnrevealedBombs(board: Field) {
-        return board.bombCount() < this.totalUnrevealed(board);
+    public hasCoordinatesToBeSwept(board: Field) {
+        return board.bombCount() < this.totalToSweep(board);
     }
 
-    private totalUnrevealed(board: Field) {
+    private totalToSweep(board: Field) {
         return (board.getHeight() * board.getWidth()) - this.revealedCoordinates.length;
     }
 

@@ -6,13 +6,6 @@ import {GameLevelSettings, gameLevelSettings} from "../settings";
 import {SweptAwayCoordinates} from "./field/SweptAwayCoordinates";
 import {GameLevel} from "./gameLevel";
 
-enum MinesweeperState {
-    NotStarted,
-    Started,
-    Finished,
-    GameOver
-}
-
 export class Minesweeper {
     static events = {
         created: eventCreator<Minesweeper>('MINESWEEPER_CREATED'),
@@ -29,7 +22,7 @@ export class Minesweeper {
                 public readonly gameLevel: GameLevel,
                 private sweptAwayCoordinates: SweptAwayCoordinates = new SweptAwayCoordinates(),
                 private field?: Field,
-                private state: MinesweeperState = MinesweeperState.NotStarted) {
+                private hasBombExploded: boolean = false) {
         this.gameLevelSettings = gameLevelSettings(gameLevel);
         this.gameLevel = gameLevel;
     }
@@ -39,7 +32,7 @@ export class Minesweeper {
     }
 
     public sweep(coordinate: Coordinate) {
-        if (this.bombExploded() || this.completelySweptAway()) {
+        if (this.isSweeperDead() || this.completelySweptAway()) {
             return;
         }
 
@@ -59,21 +52,12 @@ export class Minesweeper {
     private sweepCoordinate(coordinate: Coordinate, field: Field) {
         this.sweptAwayCoordinates = this.sweptAwayCoordinates.sweep(coordinate, field);
         this.field = field;
-        this.state = this.stateFrom(this.sweptAwayCoordinates);
 
         if (this.completelySweptAway()) {
             this.publishEvent(Minesweeper.events.finished(this));
         } else {
             this.publishEvent(Minesweeper.events.revealed(this));
         }
-    }
-
-    private stateFrom(revealedBoard: SweptAwayCoordinates) {
-        if (!this.field || revealedBoard.hasUnrevealedBombs(this.field)) {
-            return this.state;
-        }
-
-        return MinesweeperState.Finished;
     }
 
     public bombCount(coordinate: Coordinate) {
@@ -91,9 +75,16 @@ export class Minesweeper {
         return this.field && this.sweptAwayCoordinates.isRevealed(coordinate);
     }
 
+    public isSweeperDead(): boolean {
+        return this.hasBombExploded;
+    }
+
+    public completelySweptAway() {
+        return this.field && !this.sweptAwayCoordinates.hasCoordinatesToBeSwept(this.field);
+    }
+
     private startGame(coordinate: Coordinate) {
         this.field = this.createBoard(coordinate);
-        this.state = MinesweeperState.Started;
         this.sweptAwayCoordinates = this.sweptAwayCoordinates.sweep(coordinate, this.field);
 
         this.publishEvent(Minesweeper.events.started(this));
@@ -109,17 +100,8 @@ export class Minesweeper {
     }
 
     private explodeBomb() {
-        this.state = MinesweeperState.GameOver;
-
+        this.hasBombExploded = true;
         this.publishEvent(Minesweeper.events.gameOver(this));
-    }
-
-    public bombExploded(): boolean {
-        return this.state === MinesweeperState.GameOver;
-    }
-
-    public completelySweptAway() {
-        return this.state === MinesweeperState.Finished;
     }
 }
 
