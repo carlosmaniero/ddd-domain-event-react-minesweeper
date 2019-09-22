@@ -4,9 +4,11 @@ import {GameCoordinateButton, GameCoordinateProps} from "./GameCoordinateButton"
 import {Minesweeper} from "../../../domain/minesweeper/minesweeper";
 import {Coordinate} from "../../../domain/coordinate/coordinate";
 import {FieldPresenter} from "../../presenters/FieldPresenter";
+import {MineIndicator} from "../../../domain/mineIndicator/MineIndicator";
 
 export interface GameBoardProps {
-    game: Minesweeper
+    game: Minesweeper;
+    mineIndicator?: MineIndicator;
 }
 
 interface GameBoardGridProps {
@@ -40,17 +42,19 @@ export const GameCoordinateButtonHighlighted = styled(GameCoordinateButton)`
   transition: border 0.25s linear;
 `;
 
-export const GameBoard = ({game}: GameBoardProps) => {
+export const GameBoard = ({game, mineIndicator}: GameBoardProps) => {
     const [highlightedCoordinates, setCoordinates] = useState<Coordinate[]>([]);
 
     return <GameBoardGrid {...game.boardSize()}>
         {
-            new FieldPresenter(game).boardCoordinates().map((boardCoordinate, index) =>
-                <GameCoordinateButtonHighlighted
-                    highlightedCoordinates={highlightedCoordinates}
-                    onMouseEnter={() => setCoordinates(boardCoordinate.coordinate.getAdjacent())}
-                    onClick={() => game.sweep(boardCoordinate.coordinate)}
-                    boardCoordinate={boardCoordinate} key={index}/>)
+            new FieldPresenter(game, mineIndicator)
+                .boardCoordinates()
+                .map((boardCoordinate, index) =>
+                    <GameCoordinateButtonHighlighted
+                        highlightedCoordinates={highlightedCoordinates}
+                        onMouseEnter={() => setCoordinates(boardCoordinate.coordinate.getAdjacent())}
+                        onClick={() => game.sweep(boardCoordinate.coordinate)}
+                        boardCoordinate={boardCoordinate} key={index}/>)
         }
     </GameBoardGrid>
 };

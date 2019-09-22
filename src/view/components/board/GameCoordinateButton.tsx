@@ -2,7 +2,7 @@ import styled from "styled-components";
 import React from "react";
 import {Coordinate} from "../../../domain/coordinate/coordinate";
 import {
-    BoardCoordinate,
+    BoardCoordinate, isFlagged,
     isRevealed,
     isRevealedWithBombsNear,
     isRevealedWithNoBombNear
@@ -50,6 +50,10 @@ export interface GameCoordinateProps {
 }
 
 const boardCoordinateAriaLabel = (boardCoordinate: BoardCoordinate) => {
+    if (isFlagged(boardCoordinate)) {
+        return `Coordinate ${coordinateToText(boardCoordinate.coordinate)} flagged`;
+    }
+
     if (isRevealedWithNoBombNear(boardCoordinate)) {
         return `Coordinate ${coordinateToText(boardCoordinate.coordinate)} reveled with no bomb near`;
     }
@@ -62,6 +66,10 @@ const boardCoordinateAriaLabel = (boardCoordinate: BoardCoordinate) => {
 };
 
 const boardCoordinateText = (boardCoordinate: BoardCoordinate) => {
+    if (isFlagged(boardCoordinate)) {
+        return '🚩';
+    }
+
     if (isRevealedWithBombsNear(boardCoordinate)) {
         return boardCoordinate.bombCount;
     }

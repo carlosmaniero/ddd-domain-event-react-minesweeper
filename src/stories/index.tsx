@@ -14,6 +14,7 @@ import {GameLevel, getAllGameLevels} from "../domain/minesweeper/gameLevel";
 import {GameOver} from "../view/components/gameStatus/gameOver";
 import {storiesOf} from "@storybook/react";
 import {GameWin} from "../view/components/gameStatus/gameWin";
+import {MineIndicator} from "../domain/mineIndicator/MineIndicator";
 
 const eventPublisherLog = {
     publish: action('eventPublished')
@@ -45,6 +46,14 @@ storiesOf('Game Board', module)
         const game = minesweeperFactory(eventPublisherLog, () => () => MineType.Mine)(GameLevel.EASY);
         game.sweep(Coordinate.of({x: 2, y: 2}));
         return <GameBoard game={game} />
+    })
+    .add(`Game - Flagged`, () => {
+        const game = minesweeperFactory(eventPublisherLog, () => () => MineType.Mine)(GameLevel.EASY);
+
+        const mineIndicator = new MineIndicator(eventPublisherLog)
+            .toggleFlag(Coordinate.of({x: 2, y: 2}));
+
+        return <GameBoard game={game} mineIndicator={mineIndicator} />
     });
 
 storiesOf('Game Coordinate', module)

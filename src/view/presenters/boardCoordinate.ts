@@ -33,6 +33,9 @@ export const isRevealedWithNoBombNear = (boardCoordinate: BoardCoordinate): boar
 export const isRevealedWithBombsNear = (boardCoordinate: BoardCoordinate): boardCoordinate is BoardCoordinateRevealedWithBombNear =>
     boardCoordinate.type === 'REVEALED_WITH_BOMB_NEAR';
 
+export const isFlagged = (boardCoordinate: BoardCoordinate): boardCoordinate is BoardCoordinateFlagged =>
+    boardCoordinate.type === 'FLAGGED';
+
 export const isRevealed = (boardCoordinate: BoardCoordinate) =>
     isRevealedWithBombsNear(boardCoordinate) || isRevealedWithNoBombNear(boardCoordinate);
 
