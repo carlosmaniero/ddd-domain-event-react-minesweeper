@@ -22,9 +22,10 @@ describe('FieldPresenter', () => {
 
         const revealedCoordinate = Coordinate.of({x: 1, y: 2});
         const game = createGame(GameLevel.EASY);
-        const startedGame = game.sweep(revealedCoordinate);
 
-        const coordinate = new FieldPresenter(startedGame).boardCoordinates()[13];
+        game.sweep(revealedCoordinate);
+
+        const coordinate = new FieldPresenter(game).boardCoordinates()[13];
         expect(coordinate).toEqual({
             type: 'REVEALED_WITH_NO_BOMB_NEAR',
             coordinate: revealedCoordinate
@@ -37,8 +38,10 @@ describe('FieldPresenter', () => {
 
         const revealedCoordinate = Coordinate.of({x: 1, y: 2});
         const game = createGame(GameLevel.EASY);
-        const startedGame = game.sweep(revealedCoordinate);
-        const coordinate = new FieldPresenter(startedGame).boardCoordinates()[13];
+
+        game.sweep(revealedCoordinate);
+
+        const coordinate = new FieldPresenter(game).boardCoordinates()[13];
 
         expect(coordinate).toEqual({
             type: 'REVEALED_WITH_BOMB_NEAR',

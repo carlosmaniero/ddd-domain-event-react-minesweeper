@@ -37,13 +37,13 @@ storiesOf('Game Board', module)
     .add(`New Game - Medium`, () => <GameBoard game={minesweeperFactory(eventPublisherLog)(GameLevel.MEDIUM)} />)
     .add(`New Game - Hard`, () => <GameBoard game={minesweeperFactory(eventPublisherLog)(GameLevel.HARD)} />)
     .add(`Game - Started no mine`, () => {
-        const game = minesweeperFactory(eventPublisherLog, () => () => MineType.NotMine)(GameLevel.EASY)
-            .sweep(Coordinate.of({x: 2, y: 2}));
+        const game = minesweeperFactory(eventPublisherLog, () => () => MineType.NotMine)(GameLevel.EASY);
+        game.sweep(Coordinate.of({x: 2, y: 2}));
         return <GameBoard game={game} />
     })
     .add(`Game - Started mine`, () => {
-        const game = minesweeperFactory(eventPublisherLog, () => () => MineType.Mine)(GameLevel.EASY)
-            .sweep(Coordinate.of({x: 2, y: 2}));
+        const game = minesweeperFactory(eventPublisherLog, () => () => MineType.Mine)(GameLevel.EASY);
+        game.sweep(Coordinate.of({x: 2, y: 2}));
         return <GameBoard game={game} />
     });
 

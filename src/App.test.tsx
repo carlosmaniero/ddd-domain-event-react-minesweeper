@@ -88,9 +88,9 @@ describe('App Integration test', () => {
           </EventHandlerContext.Provider>);
 
       act(() => {
-        minesweeperFactory(eventHandler, oddMineGenerator)(GameLevel.EASY)
-            .sweep(Coordinate.of({x: 0, y: 0}))
-            .sweep(Coordinate.of({x: 2, y: 2}));
+        const minesweeper = minesweeperFactory(eventHandler, oddMineGenerator)(GameLevel.EASY);
+        minesweeper.sweep(Coordinate.of({x: 0, y: 0}));
+        minesweeper.sweep(Coordinate.of({x: 2, y: 2}));
       });
 
       expect(queryByLabelText('Coordinate 3x3 reveled with 6 bombs near'))
@@ -108,9 +108,9 @@ describe('App Integration test', () => {
       expect(queryByText("Game Over!")).toBeNull();
 
       act(() => {
-        minesweeperFactory(eventHandler, oddMineGenerator)(GameLevel.EASY)
-            .sweep(Coordinate.of({x: 0, y: 0}))
-            .sweep(Coordinate.of({x: 3, y: 1}));
+        const minesweeper = minesweeperFactory(eventHandler, oddMineGenerator)(GameLevel.EASY);
+        minesweeper.sweep(Coordinate.of({x: 0, y: 0}));
+        minesweeper.sweep(Coordinate.of({x: 3, y: 1}));
       });
 
       expect(queryByText("Game Over!"))
@@ -126,20 +126,20 @@ describe('App Integration test', () => {
           </EventHandlerContext.Provider>);
 
       act(() => {
-        minesweeperFactory(eventHandler,
+        const minesweeper = minesweeperFactory(eventHandler,
             () => (coordinate) =>
                 coordinate.isPresent([
-                    Coordinate.of({x: 0, y: 0}),
+                  Coordinate.of({x: 0, y: 0}),
                   Coordinate.of({x: 3, y: 2})
                 ])
-                ? MineType.NotMine : MineType.Mine
-        )(GameLevel.EASY)
-            .sweep(Coordinate.of({x: 0, y: 0}))
-            .sweep(Coordinate.of({x: 3, y: 2}));
+                    ? MineType.NotMine : MineType.Mine
+        )(GameLevel.EASY);
+
+        minesweeper.sweep(Coordinate.of({x: 0, y: 0}));
+        minesweeper.sweep(Coordinate.of({x: 3, y: 2}));
       });
 
-      expect(queryByText("You Win!"))
-          .not.toBeNull();
+      expect(queryByText("You Win!")).not.toBeNull();
     });
   });
 });

@@ -3,44 +3,44 @@ import {Coordinate} from "../coordinate/coordinate";
 import {MineType} from "./field/mine";
 import {GameLevel} from "./gameLevel";
 
-describe('Game', () => {
-    const createGameWithMockedDependencies = () => {
+describe('minesweeper', () => {
+    const createminesweeperWithMockedDependencies = () => {
         let mineFactory = jest.fn();
         let publisher = jest.fn();
 
         return {
             mineFactory,
             publisher,
-            createGame: minesweeperFactory({publish: publisher}, mineFactory),
+            createMinesweeper: minesweeperFactory({publish: publisher}, mineFactory),
         }
     };
 
-    describe('starting game', () => {
-        it('publish an event with a started game', () => {
-            const {publisher, createGame, mineFactory} = createGameWithMockedDependencies();
+    describe('starting minesweeper', () => {
+        it('publish an event with a started minesweeper', () => {
+            const {publisher, createMinesweeper, mineFactory} = createminesweeperWithMockedDependencies();
             mineFactory.mockReturnValue(() => MineType.Mine);
 
-            const game = createGame(GameLevel.EASY);
-            const startedGame = game.sweep(Coordinate.of({x: 0, y: 0}));
+            const minesweeper = createMinesweeper(GameLevel.EASY);
+            minesweeper.sweep(Coordinate.of({x: 0, y: 0}));
 
             expect(publisher).toBeCalledTimes(1);
-            expect(publisher).toBeCalledWith(Minesweeper.events.started(startedGame));
+            expect(publisher).toBeCalledWith(Minesweeper.events.started(minesweeper));
         });
 
-        describe('Game Level', () => {
+        describe('minesweeper Level', () => {
             it.each`
                 probability | level
                 ${0.2} | ${GameLevel.EASY}
                 ${0.25} | ${GameLevel.MEDIUM}
                 ${0.3} | ${GameLevel.HARD}
             `('mine factory probability is $probability for $level', ({probability, level}) => {
-                const {createGame, mineFactory} = createGameWithMockedDependencies();
+                const {createMinesweeper, mineFactory} = createminesweeperWithMockedDependencies();
                 mineFactory.mockReturnValue(() => MineType.Mine);
 
-                const game = createGame(level);
+                const minesweeper = createMinesweeper(level);
                 const initialCoordinate = Coordinate.of({x: 0, y: 0});
 
-                game.sweep(initialCoordinate);
+                minesweeper.sweep(initialCoordinate);
 
                 expect(mineFactory).toBeCalledWith(initialCoordinate, probability);
             });
@@ -51,49 +51,50 @@ describe('Game', () => {
                 ${9} | ${12} | ${GameLevel.MEDIUM}
                 ${12} | ${15} | ${GameLevel.HARD}
             `('board size is $width x $height for $level', ({width, height, level}) => {
-                const {createGame, mineFactory} = createGameWithMockedDependencies();
+                const {createMinesweeper, mineFactory} = createminesweeperWithMockedDependencies();
                 mineFactory.mockReturnValue(() => MineType.Mine);
 
-                const game = createGame(level);
+                const minesweeper = createMinesweeper(level);
                 const initialCoordinate = Coordinate.of({x: 0, y: 0});
-                const startedGame = game.sweep(initialCoordinate);
 
-                expect(startedGame.boardSize().width).toEqual(width);
-                expect(startedGame.boardSize().height).toEqual(height);
+                minesweeper.sweep(initialCoordinate);
+
+                expect(minesweeper.boardSize().width).toEqual(width);
+                expect(minesweeper.boardSize().height).toEqual(height);
             });
         });
     });
 
     describe('revealing a coordinate', () => {
-        describe('with a not started game', () => {
+        describe('with a not started minesweeper', () => {
             it('Revel a coordinate with no mine near', () => {
-                const {createGame, mineFactory} = createGameWithMockedDependencies();
+                const {createMinesweeper, mineFactory} = createminesweeperWithMockedDependencies();
                 mineFactory.mockReturnValue(() => MineType.NotMine);
 
                 const revealedCoordinate = Coordinate.of({x: 1, y: 2});
-                const game = createGame(GameLevel.EASY);
-                const startedGame = game.sweep(revealedCoordinate);
+                const minesweeper = createMinesweeper(GameLevel.EASY);
+                minesweeper.sweep(revealedCoordinate);
 
-                expect(startedGame.isSwept(revealedCoordinate)).toBeTruthy();
+                expect(minesweeper.isSwept(revealedCoordinate)).toBeTruthy();
             });
 
             it('revel a coordinate with mine near', () => {
-                const {createGame, mineFactory} = createGameWithMockedDependencies();
+                const {createMinesweeper, mineFactory} = createminesweeperWithMockedDependencies();
                 mineFactory.mockReturnValue(() => MineType.Mine);
 
                 const revealedCoordinate = Coordinate.of({x: 1, y: 2});
-                const game = createGame(GameLevel.EASY);
-                const startedGame = game.sweep(revealedCoordinate);
+                const minesweeper = createMinesweeper(GameLevel.EASY);
+                minesweeper.sweep(revealedCoordinate);
 
-                expect(startedGame.isSwept(revealedCoordinate)).toBeTruthy();
-                expect(startedGame.hasBombNear(revealedCoordinate)).toBeTruthy();
-                expect(startedGame.bombCount(revealedCoordinate)).toEqual(8);
+                expect(minesweeper.isSwept(revealedCoordinate)).toBeTruthy();
+                expect(minesweeper.hasBombNear(revealedCoordinate)).toBeTruthy();
+                expect(minesweeper.bombCount(revealedCoordinate)).toEqual(8);
             });
         });
 
-        describe('with a started game', () => {
+        describe('with a started minesweeper', () => {
             it('publish an event when a coordinate is revealed', () => {
-                const {publisher, createGame, mineFactory} = createGameWithMockedDependencies();
+                const {publisher, createMinesweeper, mineFactory} = createminesweeperWithMockedDependencies();
 
                 const initialCoordinate = Coordinate.of({x: 0, y: 0});
                 const revealCoordinate = Coordinate.of({x: 1, y: 1});
@@ -104,144 +105,138 @@ describe('Game', () => {
                      ? MineType.NotMine
                      : MineType.Mine);
 
-                const game = createGame(GameLevel.EASY);
+                const minesweeper = createMinesweeper(GameLevel.EASY);
 
-                const revealCoordinateGame = game
-                    .sweep(initialCoordinate)
-                    .sweep(revealCoordinate);
+                minesweeper.sweep(initialCoordinate);
+                minesweeper.sweep(revealCoordinate);
 
-                expect(publisher).toHaveBeenNthCalledWith(2, Minesweeper.events.revealed(revealCoordinateGame));
+                expect(publisher).toHaveBeenNthCalledWith(2, Minesweeper.events.revealed(minesweeper));
             });
 
             it('Revel a coordinate with no mine near', () => {
-                const {createGame, mineFactory} = createGameWithMockedDependencies();
+                const {createMinesweeper, mineFactory} = createminesweeperWithMockedDependencies();
                 mineFactory.mockReturnValue(() => MineType.NotMine);
 
-                const game = createGame(GameLevel.EASY);
-                const startedGame = game
-                    .sweep(Coordinate.of({x: 1, y: 2}))
-                    .sweep(Coordinate.of({x: 2, y: 2}));
+                const minesweeper = createMinesweeper(GameLevel.EASY);
+                minesweeper.sweep(Coordinate.of({x: 1, y: 2}));
+                minesweeper.sweep(Coordinate.of({x: 2, y: 2}));
 
-                expect(startedGame.hasBombNear(Coordinate.of({x: 2, y: 2}))).toBeFalsy();
-                expect(startedGame.isSwept(Coordinate.of({x: 2, y: 2}))).toBeTruthy();
+                expect(minesweeper.hasBombNear(Coordinate.of({x: 2, y: 2}))).toBeFalsy();
+                expect(minesweeper.isSwept(Coordinate.of({x: 2, y: 2}))).toBeTruthy();
             });
         });
     });
 
-    describe('game over', () => {
+    describe('minesweeper over', () => {
         it('publish an event', () => {
             const initialCoordinate = Coordinate.of({x: 0, y: 0});
-            const {publisher, createGame, mineFactory} = createGameWithMockedDependencies();
+            const {publisher, createMinesweeper, mineFactory} = createminesweeperWithMockedDependencies();
 
             mineFactory.mockReturnValue((coordinate: Coordinate) =>
                 coordinate.sameOf(initialCoordinate) ? MineType.NotMine : MineType.Mine);
 
-            const game = createGame(GameLevel.EASY);
+            const minesweeper = createMinesweeper(GameLevel.EASY);
 
-            const revealCoordinateGame = game
-                .sweep(initialCoordinate)
-                .sweep(Coordinate.of({x: 1, y: 1}));
+            minesweeper.sweep(initialCoordinate);
+            minesweeper.sweep(Coordinate.of({x: 1, y: 1}));
 
-            expect(publisher).toHaveBeenNthCalledWith(2, Minesweeper.events.gameOver(revealCoordinateGame));
+            expect(publisher).toHaveBeenNthCalledWith(2, Minesweeper.events.gameOver(minesweeper));
         });
 
-        it('marks it self as game over', () => {
+        it('marks it self as minesweeper over', () => {
             const initialCoordinate = Coordinate.of({x: 0, y: 0});
-            const {createGame, mineFactory} = createGameWithMockedDependencies();
+            const {createMinesweeper, mineFactory} = createminesweeperWithMockedDependencies();
 
             mineFactory.mockReturnValue((coordinate: Coordinate) =>
                 coordinate.sameOf(initialCoordinate) ? MineType.NotMine : MineType.Mine);
 
-            const game = createGame(GameLevel.EASY).sweep(initialCoordinate);
+            const minesweeper = createMinesweeper(GameLevel.EASY);
+            minesweeper.sweep(initialCoordinate);
 
-            expect(game.bombExploded()).toBeFalsy();
+            expect(minesweeper.bombExploded()).toBeFalsy();
 
-            const revealCoordinateGame = game
-                .sweep(Coordinate.of({x: 1, y: 1}));
+            minesweeper.sweep(Coordinate.of({x: 1, y: 1}));
 
-            expect(revealCoordinateGame.bombExploded()).toBeTruthy();
+            expect(minesweeper.bombExploded()).toBeTruthy();
         });
 
-        it('prevents new reveals after a game over', () => {
+        it('prevents new reveals after a minesweeper over', () => {
             const initialCoordinate = Coordinate.of({x: 0, y: 0});
-            const afterGameOverRevealCoordinate = Coordinate.of({x: 2, y: 2});
+            const afterminesweeperOverRevealCoordinate = Coordinate.of({x: 2, y: 2});
 
-            const {publisher, createGame, mineFactory} = createGameWithMockedDependencies();
+            const {publisher, createMinesweeper, mineFactory} = createminesweeperWithMockedDependencies();
 
             mineFactory.mockReturnValue((coordinate: Coordinate) =>
-                coordinate.sameOf(initialCoordinate) || coordinate.sameOf(afterGameOverRevealCoordinate)
+                coordinate.sameOf(initialCoordinate) || coordinate.sameOf(afterminesweeperOverRevealCoordinate)
                     ? MineType.NotMine
                     : MineType.Mine);
 
-            createGame(GameLevel.EASY)
-                .sweep(initialCoordinate)
-                .sweep(Coordinate.of({x: 1, y: 1}))
-                .sweep(afterGameOverRevealCoordinate);
+            const minesweeper = createMinesweeper(GameLevel.EASY);
+            minesweeper.sweep(initialCoordinate);
+            minesweeper.sweep(Coordinate.of({x: 1, y: 1}));
+            minesweeper.sweep(afterminesweeperOverRevealCoordinate);
 
             expect(publisher).toBeCalledTimes(2);
         });
     });
 
-    describe('finishing the game', () => {
+    describe('finishing the minesweeper', () => {
         it('publish an event', () => {
             const initialCoordinate = Coordinate.of({x: 0, y: 0});
             const finishingCoordinate = Coordinate.of({x: 1, y: 1});
 
-            const {publisher, createGame, mineFactory} = createGameWithMockedDependencies();
+            const {publisher, createMinesweeper, mineFactory} = createminesweeperWithMockedDependencies();
 
             mineFactory.mockReturnValue((coordinate: Coordinate) =>
                 coordinate.sameOf(initialCoordinate) || coordinate.sameOf(finishingCoordinate)
                     ? MineType.NotMine
                     : MineType.Mine);
 
-            const game = createGame(GameLevel.EASY);
+            const minesweeper = createMinesweeper(GameLevel.EASY);
 
-            const revealCoordinateGame = game
-                .sweep(initialCoordinate)
-                .sweep(finishingCoordinate);
+            minesweeper.sweep(initialCoordinate);
+            minesweeper.sweep(finishingCoordinate);
 
-            expect(publisher).toHaveBeenNthCalledWith(2, Minesweeper.events.finished(revealCoordinateGame));
+            expect(publisher).toHaveBeenNthCalledWith(2, Minesweeper.events.finished(minesweeper));
         });
 
         it('marks as finished', () => {
             const initialCoordinate = Coordinate.of({x: 0, y: 0});
             const finishingCoordinate = Coordinate.of({x: 1, y: 1});
 
-            const {createGame, mineFactory} = createGameWithMockedDependencies();
+            const {createMinesweeper, mineFactory} = createminesweeperWithMockedDependencies();
 
             mineFactory.mockReturnValue((coordinate: Coordinate) =>
                 coordinate.sameOf(initialCoordinate) || coordinate.sameOf(finishingCoordinate)
                     ? MineType.NotMine
                     : MineType.Mine);
 
-            const game = createGame(GameLevel.EASY);
+            const minesweeper = createMinesweeper(GameLevel.EASY);
 
-            const revealCoordinateGame = game
-                .sweep(initialCoordinate)
-                .sweep(finishingCoordinate);
+            minesweeper.sweep(initialCoordinate);
+            minesweeper.sweep(finishingCoordinate);
 
-            expect(revealCoordinateGame.completelySweptAway()).toBeTruthy();
+            expect(minesweeper.completelySweptAway()).toBeTruthy();
         });
 
-        it('does not allows bomb reveal after game finishes', () => {
+        it('does not allows bomb reveal after minesweeper finishes', () => {
             const initialCoordinate = Coordinate.of({x: 0, y: 0});
             const finishingCoordinate = Coordinate.of({x: 1, y: 1});
 
-            const {publisher, createGame, mineFactory} = createGameWithMockedDependencies();
+            const {publisher, createMinesweeper, mineFactory} = createminesweeperWithMockedDependencies();
 
             mineFactory.mockReturnValue((coordinate: Coordinate) =>
                 coordinate.sameOf(initialCoordinate) || coordinate.sameOf(finishingCoordinate)
                     ? MineType.NotMine
                     : MineType.Mine);
 
-            const game = createGame(GameLevel.EASY);
+            const minesweeper = createMinesweeper(GameLevel.EASY);
 
-            const revealCoordinateGame = game
-                .sweep(initialCoordinate)
-                .sweep(finishingCoordinate)
-                .sweep(Coordinate.of({x: 2, y: 2}));
+            minesweeper.sweep(initialCoordinate);
+            minesweeper.sweep(finishingCoordinate);
+            minesweeper.sweep(Coordinate.of({x: 2, y: 2}));
 
-            expect(publisher).toHaveBeenLastCalledWith(Minesweeper.events.finished(revealCoordinateGame));
+            expect(publisher).toHaveBeenLastCalledWith(Minesweeper.events.finished(minesweeper));
         });
     });
 });

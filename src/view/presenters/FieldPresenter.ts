@@ -9,9 +9,7 @@ import {
 const range = (size: number) => Array.from({length: size}, (_, index) => index);
 
 export class FieldPresenter {
-    constructor(private readonly minesweeper: Minesweeper) {
-
-    }
+    constructor(private readonly minesweeper: Minesweeper) { }
 
     public boardCoordinates() {
         return range(this.boardTotalCoordinates())

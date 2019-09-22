@@ -34,8 +34,9 @@ describe('GameBoard', () => {
 
     it('revels the selected coordinate without bombs', () => {
         const game = minesweeperFactory(createEventHandler(), () => () => MineType.NotMine)(GameLevel.EASY);
-        const gameWithRevealedCoordinate = game.sweep(Coordinate.of({x: 5, y: 8}));
-        const {queryByLabelText} = render(<GameBoard game={gameWithRevealedCoordinate}/>);
+        game.sweep(Coordinate.of({x: 5, y: 8}));
+
+        const {queryByLabelText} = render(<GameBoard game={game}/>);
 
         expect(queryByLabelText('Coordinate 6x9 reveled with no bomb near'))
             .not.toBeNull();
@@ -43,8 +44,8 @@ describe('GameBoard', () => {
 
     it('revels the selected coordinate with bombs', () => {
         const game = minesweeperFactory(createEventHandler(), () => () => MineType.Mine)(GameLevel.EASY);
-        const gameWithRevealedCoordinate = game.sweep(Coordinate.of({x: 2, y: 2}));
-        const {getByLabelText} = render(<GameBoard game={gameWithRevealedCoordinate}/>);
+        game.sweep(Coordinate.of({x: 2, y: 2}));
+        const {getByLabelText} = render(<GameBoard game={game}/>);
 
         const revealedCoordinate = getByLabelText('Coordinate 3x3 reveled with 8 bombs near');
         expect(revealedCoordinate.innerHTML).toBe('8');

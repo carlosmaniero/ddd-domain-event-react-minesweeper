@@ -27,9 +27,9 @@ export class Minesweeper {
     constructor(private readonly eventPublisher: EventPublisher,
                 private readonly mineFactory: MineFactory,
                 public readonly gameLevel: GameLevel,
-                private readonly sweptAwayCoordinates: SweptAwayCoordinates = new SweptAwayCoordinates(),
-                private readonly field?: Field,
-                private readonly state: MinesweeperState = MinesweeperState.NotStarted) {
+                private sweptAwayCoordinates: SweptAwayCoordinates = new SweptAwayCoordinates(),
+                private field?: Field,
+                private state: MinesweeperState = MinesweeperState.NotStarted) {
         this.gameLevelSettings = gameLevelSettings(gameLevel);
         this.gameLevel = gameLevel;
     }
@@ -38,41 +38,34 @@ export class Minesweeper {
         return this.gameLevelSettings.boardSize;
     }
 
-    public sweep(coordinate: Coordinate): Minesweeper {
+    public sweep(coordinate: Coordinate) {
         if (this.bombExploded() || this.completelySweptAway()) {
-            return this;
+            return;
         }
 
         if (!this.field) {
-            return this.startGame(coordinate);
+            this.startGame(coordinate);
+            return;
         }
 
         if (this.field.isBomb(coordinate)) {
-            return this.explodeBomb();
+            this.explodeBomb();
+            return;
         }
 
-        return this.sweepCoordinate(coordinate, this.field);
+        this.sweepCoordinate(coordinate, this.field);
     }
 
-    private sweepCoordinate(coordinate: Coordinate, board: Field) {
-        const revealedBoard = this.sweptAwayCoordinates.sweep(coordinate, board);
+    private sweepCoordinate(coordinate: Coordinate, field: Field) {
+        this.sweptAwayCoordinates = this.sweptAwayCoordinates.sweep(coordinate, field);
+        this.field = field;
+        this.state = this.stateFrom(this.sweptAwayCoordinates);
 
-        let reveledGame = new Minesweeper(
-            this.eventPublisher,
-            this.mineFactory,
-            this.gameLevel,
-            revealedBoard,
-            board,
-            this.stateFrom(revealedBoard)
-        );
-
-        if (reveledGame.completelySweptAway()) {
-            this.publishEvent(Minesweeper.events.finished(reveledGame));
+        if (this.completelySweptAway()) {
+            this.publishEvent(Minesweeper.events.finished(this));
         } else {
-            this.publishEvent(Minesweeper.events.revealed(reveledGame));
+            this.publishEvent(Minesweeper.events.revealed(this));
         }
-
-        return reveledGame;
     }
 
     private stateFrom(revealedBoard: SweptAwayCoordinates) {
@@ -99,19 +92,11 @@ export class Minesweeper {
     }
 
     private startGame(coordinate: Coordinate) {
-        const board = this.createBoard(coordinate);
+        this.field = this.createBoard(coordinate);
+        this.state = MinesweeperState.Started;
+        this.sweptAwayCoordinates = this.sweptAwayCoordinates.sweep(coordinate, this.field);
 
-        const startedGame = new Minesweeper(
-            this.eventPublisher,
-            this.mineFactory,
-            this.gameLevel,
-            this.sweptAwayCoordinates.sweep(coordinate, board),
-            board,
-            MinesweeperState.Started
-        );
-
-        this.publishEvent(Minesweeper.events.started(startedGame));
-        return startedGame;
+        this.publishEvent(Minesweeper.events.started(this));
     }
 
     private createBoard(coordinate: Coordinate) {
@@ -124,17 +109,9 @@ export class Minesweeper {
     }
 
     private explodeBomb() {
-        const gameOverMinesweeper = new Minesweeper(
-            this.eventPublisher,
-            this.mineFactory,
-            this.gameLevel,
-            this.sweptAwayCoordinates,
-            this.field,
-            MinesweeperState.GameOver
-        );
+        this.state = MinesweeperState.GameOver;
 
-        this.publishEvent(Minesweeper.events.gameOver(gameOverMinesweeper));
-        return gameOverMinesweeper;
+        this.publishEvent(Minesweeper.events.gameOver(this));
     }
 
     public bombExploded(): boolean {
