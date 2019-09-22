@@ -31,8 +31,8 @@ describe('minesweeper', () => {
             it.each`
                 probability | level
                 ${0.2} | ${GameLevel.EASY}
-                ${0.25} | ${GameLevel.MEDIUM}
-                ${0.3} | ${GameLevel.HARD}
+                ${0.2} | ${GameLevel.MEDIUM}
+                ${0.17} | ${GameLevel.HARD}
             `('mine factory probability is $probability for $level', ({probability, level}) => {
                 const {createMinesweeper, mineFactory} = createminesweeperWithMockedDependencies();
                 mineFactory.mockReturnValue(() => MineType.Mine);

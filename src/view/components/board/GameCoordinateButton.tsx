@@ -36,9 +36,15 @@ const textColor = ({boardCoordinate}: GameCoordinateElementProps) => {
     return '#E64D5A';
 };
 
+const calculateBackground = ({boardCoordinate}: GameCoordinateElementProps) =>
+    isRevealed(boardCoordinate) ? '#FCFCFC' : '#EFEFEF';
+
+const calculateFontSize = ({boardCoordinate}: GameCoordinateElementProps) =>
+    isFlagged(boardCoordinate) ? '0.6rem' : '1.2rem';
+
 export const GameCoordinateElement = styled.button`
-  background: ${({boardCoordinate}: GameCoordinateElementProps) => isRevealed(boardCoordinate) ? '#FCFCFC' : '#EFEFEF'};
-  font-size: 1.2rem;
+  background: ${calculateBackground};
+  font-size: ${calculateFontSize};
   color: ${textColor};
 `;
 
