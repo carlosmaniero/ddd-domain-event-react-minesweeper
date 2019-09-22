@@ -6,7 +6,7 @@ export interface BoardSize {
     height: number;
 }
 
-export class GameBoard {
+export class Field {
     constructor(readonly board: MineType[][]) {
         this.board = board;
     }
@@ -57,7 +57,7 @@ export class GameBoard {
     }
 }
 
-export type BoardCreator = (boardSize: BoardSize) => GameBoard;
+export type BoardCreator = (boardSize: BoardSize) => Field;
 
 type BoardLineCreator = (line: number) => MineType[];
 
@@ -69,5 +69,5 @@ const boardLineCreatorFor = (mineCreator: MineCreator, width: number): BoardLine
 const createBoard = (boardLineCreator: BoardLineCreator, height: number) =>
     range(height).map(boardLineCreator);
 
-export const createGameBoard = (mineCreator: MineCreator): BoardCreator => (boardSize: BoardSize): GameBoard =>
-    new GameBoard(createBoard(boardLineCreatorFor(mineCreator, boardSize.width), boardSize.height));
+export const createGameBoard = (mineCreator: MineCreator): BoardCreator => (boardSize: BoardSize): Field =>
+    new Field(createBoard(boardLineCreatorFor(mineCreator, boardSize.width), boardSize.height));

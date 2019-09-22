@@ -48,7 +48,7 @@ export const GameBoard = ({game}: GameBoardProps) => {
                 <GameCoordinateButtonHighlighted
                     highlightedCoordinates={highlightedCoordinates}
                     onMouseEnter={() => setCoordinates(boardCoordinate.coordinate.getAdjacent())}
-                    onClick={() => game.revealCoordinate(boardCoordinate.coordinate)}
+                    onClick={() => game.sweep(boardCoordinate.coordinate)}
                     boardCoordinate={boardCoordinate} key={index}/>)
         }
     </GameBoardGrid>

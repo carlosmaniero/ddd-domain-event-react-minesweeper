@@ -1,5 +1,5 @@
 import {MineCreator, MineType} from "./mine";
-import {createGameBoard} from "./gameBoard";
+import {createGameBoard} from "./field";
 import {Coordinate} from "../../coordinate/coordinate";
 
 describe('gameBoard', () => {

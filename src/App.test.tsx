@@ -6,7 +6,7 @@ import {createEventHandler} from "./infrastructure/events/eventHandler";
 import {Minesweeper, minesweeperFactory} from "./domain/minesweeper/minesweeper";
 import {act} from "react-dom/test-utils";
 import {Coordinate} from "./domain/coordinate/coordinate";
-import {MineType} from "./domain/minesweeper/board/mine";
+import {MineType} from "./domain/minesweeper/field/mine";
 import {GameLevel} from "./domain/minesweeper/gameLevel";
 
 
@@ -72,7 +72,7 @@ describe('App Integration test', () => {
       act(() => {
         const minesweeper = minesweeperFactory(eventHandler)(GameLevel.EASY);
         eventHandler.publish(Minesweeper.events.created(minesweeper));
-        minesweeper.revealCoordinate(Coordinate.of({x: 0, y: 0}));
+        minesweeper.sweep(Coordinate.of({x: 0, y: 0}));
       });
 
       expect(queryByLabelText('Coordinate 1x1 reveled with no bomb near'))
@@ -89,8 +89,8 @@ describe('App Integration test', () => {
 
       act(() => {
         minesweeperFactory(eventHandler, oddMineGenerator)(GameLevel.EASY)
-            .revealCoordinate(Coordinate.of({x: 0, y: 0}))
-            .revealCoordinate(Coordinate.of({x: 2, y: 2}));
+            .sweep(Coordinate.of({x: 0, y: 0}))
+            .sweep(Coordinate.of({x: 2, y: 2}));
       });
 
       expect(queryByLabelText('Coordinate 3x3 reveled with 6 bombs near'))
@@ -109,8 +109,8 @@ describe('App Integration test', () => {
 
       act(() => {
         minesweeperFactory(eventHandler, oddMineGenerator)(GameLevel.EASY)
-            .revealCoordinate(Coordinate.of({x: 0, y: 0}))
-            .revealCoordinate(Coordinate.of({x: 3, y: 1}));
+            .sweep(Coordinate.of({x: 0, y: 0}))
+            .sweep(Coordinate.of({x: 3, y: 1}));
       });
 
       expect(queryByText("Game Over!"))
@@ -134,8 +134,8 @@ describe('App Integration test', () => {
                 ])
                 ? MineType.NotMine : MineType.Mine
         )(GameLevel.EASY)
-            .revealCoordinate(Coordinate.of({x: 0, y: 0}))
-            .revealCoordinate(Coordinate.of({x: 3, y: 2}));
+            .sweep(Coordinate.of({x: 0, y: 0}))
+            .sweep(Coordinate.of({x: 3, y: 2}));
       });
 
       expect(queryByText("You Win!"))

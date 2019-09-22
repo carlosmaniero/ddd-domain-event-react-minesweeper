@@ -1,4 +1,4 @@
-import {BoardSize} from "./minesweeper/board/gameBoard";
+import {BoardSize} from "./minesweeper/field/field";
 import {GameLevel} from "./minesweeper/gameLevel";
 
 export interface GameLevelSettings {

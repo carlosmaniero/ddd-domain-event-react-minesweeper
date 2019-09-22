@@ -1,11 +1,11 @@
-import {GameBoard} from "./gameBoard";
+import {Field} from "./field";
 import {MineType} from "./mine";
-import {RevealedBoard} from "./RevealedBoard";
+import {CleanedBoard} from "./CleanedBoard";
 import {Coordinate} from "../../coordinate/coordinate";
 
 describe('RevealedBoard', () => {
     it('auto discover non bomb coordinate', () => {
-        const board = new GameBoard([
+        const board = new Field([
             [MineType.NotMine, MineType.NotMine, MineType.NotMine, MineType.NotMine],
             [MineType.NotMine, MineType.NotMine, MineType.NotMine, MineType.NotMine],
             [MineType.NotMine, MineType.NotMine, MineType.NotMine, MineType.NotMine],
@@ -13,8 +13,8 @@ describe('RevealedBoard', () => {
             [MineType.NotMine, MineType.NotMine, MineType.NotMine, MineType.NotMine]
         ]);
 
-        const revealBoard = new RevealedBoard();
-        const afterRevealAll = revealBoard.reveal(Coordinate.of({x: 0, y: 0}), board);
+        const revealBoard = new CleanedBoard();
+        const afterRevealAll = revealBoard.clean(Coordinate.of({x: 0, y: 0}), board);
 
         expect(afterRevealAll.hasUnrevealedBombs(board)).toBeFalsy();
     });

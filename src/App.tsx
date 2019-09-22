@@ -30,8 +30,8 @@ const App: React.FC = () => {
         <div className="App">
             {!minesweeper && <LevelSelector onSelect={(gameLevel) => createMinesweeperService.create(gameLevel)}/>}
             {minesweeper && <GameBoard game={minesweeper} />}
-            {minesweeper && minesweeper.isGameOver() && <GameOver />}
-            {minesweeper && minesweeper.isFinished() && <GameWin />}
+            {minesweeper && minesweeper.bombExploded() && <GameOver />}
+            {minesweeper && minesweeper.completelyCleaned() && <GameWin />}
         </div>
     );
 };

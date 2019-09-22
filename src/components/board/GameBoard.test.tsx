@@ -3,7 +3,7 @@ import {fireEvent, render} from "@testing-library/react";
 import {minesweeperFactory} from "../../domain/minesweeper/minesweeper";
 import React from "react";
 import {Coordinate} from "../../domain/coordinate/coordinate";
-import {MineType} from "../../domain/minesweeper/board/mine";
+import {MineType} from "../../domain/minesweeper/field/mine";
 import {createEventHandler} from "../../infrastructure/events/eventHandler";
 import {GameLevel} from "../../domain/minesweeper/gameLevel";
 
@@ -24,7 +24,7 @@ describe('GameBoard', () => {
 
     it('starts a game at the first click', () => {
         const game = minesweeperFactory(createEventHandler())(GameLevel.EASY);
-        const startGameSpy = jest.spyOn(game, 'revealCoordinate');
+        const startGameSpy = jest.spyOn(game, 'sweep');
 
         const {getByLabelText} = render(<GameBoard game={game}/>);
         fireEvent.click(getByLabelText('Coordinate 6x9'));
@@ -34,7 +34,7 @@ describe('GameBoard', () => {
 
     it('revels the selected coordinate without bombs', () => {
         const game = minesweeperFactory(createEventHandler(), () => () => MineType.NotMine)(GameLevel.EASY);
-        const gameWithRevealedCoordinate = game.revealCoordinate(Coordinate.of({x: 5, y: 8}));
+        const gameWithRevealedCoordinate = game.sweep(Coordinate.of({x: 5, y: 8}));
         const {queryByLabelText} = render(<GameBoard game={gameWithRevealedCoordinate}/>);
 
         expect(queryByLabelText('Coordinate 6x9 reveled with no bomb near'))
@@ -43,7 +43,7 @@ describe('GameBoard', () => {
 
     it('revels the selected coordinate with bombs', () => {
         const game = minesweeperFactory(createEventHandler(), () => () => MineType.Mine)(GameLevel.EASY);
-        const gameWithRevealedCoordinate = game.revealCoordinate(Coordinate.of({x: 2, y: 2}));
+        const gameWithRevealedCoordinate = game.sweep(Coordinate.of({x: 2, y: 2}));
         const {getByLabelText} = render(<GameBoard game={gameWithRevealedCoordinate}/>);
 
         const revealedCoordinate = getByLabelText('Coordinate 3x3 reveled with 8 bombs near');

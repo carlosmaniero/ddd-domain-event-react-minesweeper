@@ -1,6 +1,6 @@
 import {minesweeperFactory, Minesweeper} from "./minesweeper";
 import {Coordinate} from "../coordinate/coordinate";
-import {MineType} from "./board/mine";
+import {MineType} from "./field/mine";
 import {GameLevel} from "./gameLevel";
 
 describe('Game', () => {
@@ -21,7 +21,7 @@ describe('Game', () => {
             mineFactory.mockReturnValue(() => MineType.Mine);
 
             const game = createGame(GameLevel.EASY);
-            const startedGame = game.revealCoordinate(Coordinate.of({x: 0, y: 0}));
+            const startedGame = game.sweep(Coordinate.of({x: 0, y: 0}));
 
             expect(publisher).toBeCalledTimes(1);
             expect(publisher).toBeCalledWith(Minesweeper.events.started(startedGame));
@@ -40,7 +40,7 @@ describe('Game', () => {
                 const game = createGame(level);
                 const initialCoordinate = Coordinate.of({x: 0, y: 0});
 
-                game.revealCoordinate(initialCoordinate);
+                game.sweep(initialCoordinate);
 
                 expect(mineFactory).toBeCalledWith(initialCoordinate, probability);
             });
@@ -56,7 +56,7 @@ describe('Game', () => {
 
                 const game = createGame(level);
                 const initialCoordinate = Coordinate.of({x: 0, y: 0});
-                const startedGame = game.revealCoordinate(initialCoordinate);
+                const startedGame = game.sweep(initialCoordinate);
 
                 expect(startedGame.boardSize().width).toEqual(width);
                 expect(startedGame.boardSize().height).toEqual(height);
@@ -72,7 +72,7 @@ describe('Game', () => {
 
                 const revealedCoordinate = Coordinate.of({x: 1, y: 2});
                 const game = createGame(GameLevel.EASY);
-                const startedGame = game.revealCoordinate(revealedCoordinate);
+                const startedGame = game.sweep(revealedCoordinate);
 
                 const coordinate = startedGame.boardCoordinates()[13];
                 expect(coordinate).toEqual({
@@ -87,7 +87,7 @@ describe('Game', () => {
 
                 const revealedCoordinate = Coordinate.of({x: 1, y: 2});
                 const game = createGame(GameLevel.EASY);
-                const startedGame = game.revealCoordinate(revealedCoordinate);
+                const startedGame = game.sweep(revealedCoordinate);
                 const coordinate = startedGame.boardCoordinates()[13];
 
                 expect(coordinate).toEqual({
@@ -114,8 +114,8 @@ describe('Game', () => {
                 const game = createGame(GameLevel.EASY);
 
                 const revealCoordinateGame = game
-                    .revealCoordinate(initialCoordinate)
-                    .revealCoordinate(revealCoordinate);
+                    .sweep(initialCoordinate)
+                    .sweep(revealCoordinate);
 
                 expect(publisher).toHaveBeenNthCalledWith(2, Minesweeper.events.revealed(revealCoordinateGame));
             });
@@ -126,8 +126,8 @@ describe('Game', () => {
 
                 const game = createGame(GameLevel.EASY);
                 const startedGame = game
-                    .revealCoordinate(Coordinate.of({x: 1, y: 2}))
-                    .revealCoordinate(Coordinate.of({x: 2, y: 2}));
+                    .sweep(Coordinate.of({x: 1, y: 2}))
+                    .sweep(Coordinate.of({x: 2, y: 2}));
 
                 const coordinate = startedGame.boardCoordinates()[14];
 
@@ -150,8 +150,8 @@ describe('Game', () => {
             const game = createGame(GameLevel.EASY);
 
             const revealCoordinateGame = game
-                .revealCoordinate(initialCoordinate)
-                .revealCoordinate(Coordinate.of({x: 1, y: 1}));
+                .sweep(initialCoordinate)
+                .sweep(Coordinate.of({x: 1, y: 1}));
 
             expect(publisher).toHaveBeenNthCalledWith(2, Minesweeper.events.gameOver(revealCoordinateGame));
         });
@@ -163,14 +163,14 @@ describe('Game', () => {
             mineFactory.mockReturnValue((coordinate: Coordinate) =>
                 coordinate.sameOf(initialCoordinate) ? MineType.NotMine : MineType.Mine);
 
-            const game = createGame(GameLevel.EASY).revealCoordinate(initialCoordinate);
+            const game = createGame(GameLevel.EASY).sweep(initialCoordinate);
 
-            expect(game.isGameOver()).toBeFalsy();
+            expect(game.bombExploded()).toBeFalsy();
 
             const revealCoordinateGame = game
-                .revealCoordinate(Coordinate.of({x: 1, y: 1}));
+                .sweep(Coordinate.of({x: 1, y: 1}));
 
-            expect(revealCoordinateGame.isGameOver()).toBeTruthy();
+            expect(revealCoordinateGame.bombExploded()).toBeTruthy();
         });
 
         it('prevents new reveals after a game over', () => {
@@ -185,9 +185,9 @@ describe('Game', () => {
                     : MineType.Mine);
 
             createGame(GameLevel.EASY)
-                .revealCoordinate(initialCoordinate)
-                .revealCoordinate(Coordinate.of({x: 1, y: 1}))
-                .revealCoordinate(afterGameOverRevealCoordinate);
+                .sweep(initialCoordinate)
+                .sweep(Coordinate.of({x: 1, y: 1}))
+                .sweep(afterGameOverRevealCoordinate);
 
             expect(publisher).toBeCalledTimes(2);
         });
@@ -208,8 +208,8 @@ describe('Game', () => {
             const game = createGame(GameLevel.EASY);
 
             const revealCoordinateGame = game
-                .revealCoordinate(initialCoordinate)
-                .revealCoordinate(finishingCoordinate);
+                .sweep(initialCoordinate)
+                .sweep(finishingCoordinate);
 
             expect(publisher).toHaveBeenNthCalledWith(2, Minesweeper.events.finished(revealCoordinateGame));
         });
@@ -228,10 +228,10 @@ describe('Game', () => {
             const game = createGame(GameLevel.EASY);
 
             const revealCoordinateGame = game
-                .revealCoordinate(initialCoordinate)
-                .revealCoordinate(finishingCoordinate);
+                .sweep(initialCoordinate)
+                .sweep(finishingCoordinate);
 
-            expect(revealCoordinateGame.isFinished()).toBeTruthy();
+            expect(revealCoordinateGame.completelyCleaned()).toBeTruthy();
         });
 
         it('does not allows bomb reveal after game finishes', () => {
@@ -248,9 +248,9 @@ describe('Game', () => {
             const game = createGame(GameLevel.EASY);
 
             const revealCoordinateGame = game
-                .revealCoordinate(initialCoordinate)
-                .revealCoordinate(finishingCoordinate)
-                .revealCoordinate(Coordinate.of({x: 2, y: 2}));
+                .sweep(initialCoordinate)
+                .sweep(finishingCoordinate)
+                .sweep(Coordinate.of({x: 2, y: 2}));
 
             expect(publisher).toHaveBeenLastCalledWith(Minesweeper.events.finished(revealCoordinateGame));
         });

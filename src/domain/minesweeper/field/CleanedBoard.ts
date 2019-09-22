@@ -1,30 +1,30 @@
 import {Coordinate} from "../../coordinate/coordinate";
-import {GameBoard} from "./gameBoard";
+import {Field} from "./field";
 
-export class RevealedBoard {
+export class CleanedBoard {
     constructor(readonly revealedCoordinates: Coordinate[] = []) {}
 
-    public reveal(coordinate: Coordinate, board: GameBoard) {
+    public clean(coordinate: Coordinate, board: Field) {
         const revealedCoordinates = this.isRevealed(coordinate)
             ? this.revealedCoordinates
             : [...this.revealedCoordinates, coordinate];
 
-        return new RevealedBoard(this.propagateReveal(revealedCoordinates, coordinate, board, 5))
+        return new CleanedBoard(this.propagateReveal(revealedCoordinates, coordinate, board, 5))
     }
 
     public isRevealed(coordinate: Coordinate) {
         return this.revealedCoordinates.some(revealedCoordinate => revealedCoordinate.sameOf(coordinate));
     }
 
-    public hasUnrevealedBombs(board: GameBoard) {
+    public hasUnrevealedBombs(board: Field) {
         return board.bombCount() < this.totalUnrevealed(board);
     }
 
-    private totalUnrevealed(board: GameBoard) {
+    private totalUnrevealed(board: Field) {
         return (board.getHeight() * board.getWidth()) - this.revealedCoordinates.length;
     }
 
-    private propagateReveal(revealedCoordinate: Coordinate[], coordinate: Coordinate, board: GameBoard, depth: number): Coordinate[] {
+    private propagateReveal(revealedCoordinate: Coordinate[], coordinate: Coordinate, board: Field, depth: number): Coordinate[] {
         if (depth === 0) {
             return revealedCoordinate;
         }

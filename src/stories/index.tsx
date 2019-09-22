@@ -7,7 +7,7 @@ import {LevelButton} from "../components/levelSelector/LevelButton";
 import {minesweeperFactory} from "../domain/minesweeper/minesweeper";
 import {LevelSelector} from "../components/levelSelector/LevelSelector";
 import {GameBoard} from "../components/board/GameBoard";
-import {MineType} from "../domain/minesweeper/board/mine";
+import {MineType} from "../domain/minesweeper/field/mine";
 import {Coordinate} from "../domain/coordinate/coordinate";
 import {GameCoordinateButton} from "../components/board/GameCoordinateButton";
 import {GameLevel, getAllGameLevels} from "../domain/minesweeper/gameLevel";
@@ -38,12 +38,12 @@ storiesOf('Game Board', module)
     .add(`New Game - Hard`, () => <GameBoard game={minesweeperFactory(eventPublisherLog)(GameLevel.HARD)} />)
     .add(`Game - Started no mine`, () => {
         const game = minesweeperFactory(eventPublisherLog, () => () => MineType.NotMine)(GameLevel.EASY)
-            .revealCoordinate(Coordinate.of({x: 2, y: 2}));
+            .sweep(Coordinate.of({x: 2, y: 2}));
         return <GameBoard game={game} />
     })
     .add(`Game - Started mine`, () => {
         const game = minesweeperFactory(eventPublisherLog, () => () => MineType.Mine)(GameLevel.EASY)
-            .revealCoordinate(Coordinate.of({x: 2, y: 2}));
+            .sweep(Coordinate.of({x: 2, y: 2}));
         return <GameBoard game={game} />
     });
 
