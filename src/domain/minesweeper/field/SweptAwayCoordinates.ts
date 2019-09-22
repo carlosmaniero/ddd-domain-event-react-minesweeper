@@ -27,17 +27,14 @@ export class SweptAwayCoordinates {
     private static propagateSweep(sweptCoordinates: Coordinate[], field: Field): Coordinate[] {
         const wasSweep = (coordinate: Coordinate) => coordinate.isPresent(sweptCoordinates);
 
-        const afterAutoSweepCoordinates = field.coordinates()
-            .filter((coordinate: Coordinate) => {
-                if(wasSweep(coordinate)) {
-                    return true;
-                }
+        const hasBombNear = (coordinate: Coordinate) =>
+            coordinate.getAdjacent()
+                .filter((adjacentCoordinate) => field.containsCoordinate(adjacentCoordinate))
+                .filter((adjacentCoordinate) => adjacentCoordinate.isPresent(sweptCoordinates))
+                .some((adjacentCoordinate) => !field.hasBombNear(adjacentCoordinate));
 
-                return coordinate.getAdjacent()
-                    .filter((adjacentCoordinate) => field.containsCoordinate(adjacentCoordinate))
-                    .filter((adjacentCoordinate) => adjacentCoordinate.isPresent(sweptCoordinates))
-                    .some((adjacentCoordinate) => !field.hasBombNear(adjacentCoordinate));
-        });
+        const afterAutoSweepCoordinates = field.coordinates()
+            .filter((coordinate: Coordinate) => wasSweep(coordinate) || hasBombNear(coordinate));
 
         if (afterAutoSweepCoordinates.length !== sweptCoordinates.length) {
             return SweptAwayCoordinates.propagateSweep(afterAutoSweepCoordinates, field);
