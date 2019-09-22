@@ -8,6 +8,7 @@ import {act} from "react-dom/test-utils";
 import {Coordinate} from "./domain/coordinate/coordinate";
 import {MineType} from "./domain/minesweeper/field/mine";
 import {GameLevel} from "./domain/minesweeper/gameLevel";
+import {MineIndicator} from "./domain/mineIndicator/MineIndicator";
 
 
 describe('App Integration test', () => {
@@ -89,6 +90,7 @@ describe('App Integration test', () => {
 
       act(() => {
         const minesweeper = minesweeperFactory(eventHandler, oddMineGenerator)(GameLevel.EASY);
+        eventHandler.publish(Minesweeper.events.created(minesweeper));
         minesweeper.sweep(Coordinate.of({x: 0, y: 0}));
         minesweeper.sweep(Coordinate.of({x: 2, y: 2}));
       });
@@ -140,6 +142,68 @@ describe('App Integration test', () => {
       });
 
       expect(queryByText("You Win!")).not.toBeNull();
+    });
+  });
+
+  describe('Showing the board', () => {
+    it('creates a mine indicator after creating a game', () => {
+      const eventHandler = createEventHandler();
+      const mineIndicatorCreatedCallback = jest.fn();
+      eventHandler.listen(MineIndicator.events.created, mineIndicatorCreatedCallback);
+
+      render(
+          <EventHandlerContext.Provider value={eventHandler}>
+            <App/>
+          </EventHandlerContext.Provider>
+      );
+
+      act(() => {
+        const minesweeper = minesweeperFactory(eventHandler)(GameLevel.EASY);
+        eventHandler.publish(Minesweeper.events.created(minesweeper));
+      });
+
+      expect(mineIndicatorCreatedCallback).toBeCalledWith(new MineIndicator(eventHandler));
+    });
+
+    it('shows a flag', () => {
+      const eventHandler = createEventHandler();
+
+      const {queryByLabelText} = render(
+          <EventHandlerContext.Provider value={eventHandler}>
+            <App/>
+          </EventHandlerContext.Provider>
+      );
+
+      act(() => {
+        const minesweeper = minesweeperFactory(eventHandler)(GameLevel.EASY);
+        const mineIndicator = new MineIndicator(eventHandler, [Coordinate.of({x: 0, y: 0})]);
+
+        eventHandler.publish(Minesweeper.events.created(minesweeper));
+        eventHandler.publish(MineIndicator.events.flagAdded(mineIndicator));
+      });
+
+      expect(queryByLabelText('Coordinate 1x1 flagged')).not.toBeNull();
+    });
+
+    it('hides a flag', () => {
+      const eventHandler = createEventHandler();
+
+      const {queryByLabelText} = render(
+          <EventHandlerContext.Provider value={eventHandler}>
+            <App/>
+          </EventHandlerContext.Provider>
+      );
+
+      act(() => {
+        const minesweeper = minesweeperFactory(eventHandler)(GameLevel.EASY);
+        const mineIndicator = new MineIndicator(eventHandler, [Coordinate.of({x: 0, y: 0})]);
+
+        eventHandler.publish(Minesweeper.events.created(minesweeper));
+        eventHandler.publish(MineIndicator.events.flagAdded(mineIndicator));
+        mineIndicator.toggleFlag(Coordinate.of({x: 0, y: 0}));
+      });
+
+      expect(queryByLabelText('Coordinate 1x1 flagged')).toBeNull();
     });
   });
 });

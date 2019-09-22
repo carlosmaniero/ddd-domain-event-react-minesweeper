@@ -8,7 +8,7 @@ import {MineIndicator} from "../../../domain/mineIndicator/MineIndicator";
 
 export interface GameBoardProps {
     game: Minesweeper;
-    mineIndicator?: MineIndicator;
+    mineIndicator: MineIndicator;
 }
 
 interface GameBoardGridProps {
@@ -52,8 +52,9 @@ export const GameBoard = ({game, mineIndicator}: GameBoardProps) => {
                 .map((boardCoordinate, index) =>
                     <GameCoordinateButtonHighlighted
                         highlightedCoordinates={highlightedCoordinates}
+                        onContextMenu={() => mineIndicator && mineIndicator.toggleFlag(boardCoordinate.coordinate)}
                         onMouseEnter={() => setCoordinates(boardCoordinate.coordinate.getAdjacent())}
-                        onClick={() => game.sweep(boardCoordinate.coordinate)}
+                        onClick={() => (!mineIndicator || !mineIndicator.isFlagged(boardCoordinate.coordinate)) && game.sweep(boardCoordinate.coordinate)}
                         boardCoordinate={boardCoordinate} key={index}/>)
         }
     </GameBoardGrid>

@@ -34,7 +34,6 @@ export const createEventHandler = (): EventHandler => {
             const clonedPayload = typeof event.payload === 'object'
                 ? Object.assign(Object.create(Object.getPrototypeOf(event.payload)), event.payload)
                 : event.payload;
-
             subscriptions
                 .filter(subscription => subscription.eventCreator.isTypeOf(event))
                 .forEach(subscription => subscription.callback(clonedPayload));

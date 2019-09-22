@@ -45,6 +45,7 @@ export const GameCoordinateElement = styled.button`
 export interface GameCoordinateProps {
     boardCoordinate: BoardCoordinate;
     onClick: () => void;
+    onContextMenu: () => void;
     onMouseEnter: () => void;
     className?: string;
 }
@@ -79,9 +80,10 @@ const boardCoordinateText = (boardCoordinate: BoardCoordinate) => {
 
 const coordinateToText = (coordinate: Coordinate) => (coordinate.x + 1) + 'x' + (coordinate.y + 1);
 
-export const GameCoordinateButton = ({onClick, onMouseEnter, boardCoordinate, className}: GameCoordinateProps) =>
+export const GameCoordinateButton = ({onClick, onMouseEnter, boardCoordinate, className, onContextMenu}: GameCoordinateProps) =>
     <GameCoordinateElement
         onClick={() => onClick()}
+        onContextMenu={(e) => { e.preventDefault(); onContextMenu() }}
         className={className}
         onMouseEnter={() => onMouseEnter()}
         aria-label={boardCoordinateAriaLabel(boardCoordinate)}

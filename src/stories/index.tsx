@@ -34,22 +34,23 @@ storiesOf('LevelSelector', module)
     .add(`default`, () => <LevelSelector onSelect={action('selected')}/>);
 
 storiesOf('Game Board', module)
-    .add(`New Game - Easy`, () => <GameBoard game={minesweeperFactory(eventPublisherLog)(GameLevel.EASY)} />)
-    .add(`New Game - Medium`, () => <GameBoard game={minesweeperFactory(eventPublisherLog)(GameLevel.MEDIUM)} />)
-    .add(`New Game - Hard`, () => <GameBoard game={minesweeperFactory(eventPublisherLog)(GameLevel.HARD)} />)
+    .add(`New Game - Easy`, () => <GameBoard mineIndicator={new MineIndicator(eventPublisherLog)} game={minesweeperFactory(eventPublisherLog)(GameLevel.EASY)} />)
+    .add(`New Game - Medium`, () => <GameBoard mineIndicator={new MineIndicator(eventPublisherLog)} game={minesweeperFactory(eventPublisherLog)(GameLevel.MEDIUM)} />)
+    .add(`New Game - Hard`, () => <GameBoard mineIndicator={new MineIndicator(eventPublisherLog)} game={minesweeperFactory(eventPublisherLog)(GameLevel.HARD)} />)
     .add(`Game - Started no mine`, () => {
         const game = minesweeperFactory(eventPublisherLog, () => () => MineType.NotMine)(GameLevel.EASY);
+        const mineIndicator = new MineIndicator(eventPublisherLog);
         game.sweep(Coordinate.of({x: 2, y: 2}));
-        return <GameBoard game={game} />
+        return <GameBoard game={game}  mineIndicator={mineIndicator} />
     })
     .add(`Game - Started mine`, () => {
         const game = minesweeperFactory(eventPublisherLog, () => () => MineType.Mine)(GameLevel.EASY);
+        const mineIndicator = new MineIndicator(eventPublisherLog);
         game.sweep(Coordinate.of({x: 2, y: 2}));
-        return <GameBoard game={game} />
+        return <GameBoard game={game} mineIndicator={mineIndicator} />
     })
     .add(`Game - Flagged`, () => {
         const game = minesweeperFactory(eventPublisherLog, () => () => MineType.Mine)(GameLevel.EASY);
-
         const mineIndicator = new MineIndicator(eventPublisherLog)
             .toggleFlag(Coordinate.of({x: 2, y: 2}));
 
@@ -59,34 +60,42 @@ storiesOf('Game Board', module)
 storiesOf('Game Coordinate', module)
     .add(`Game Coordinate - 1`, () => <GameCoordinateButton
         onMouseEnter={action('mouseEnter')}
+        onContextMenu={action('contextMenu')}
         onClick={action('clicked')}
         boardCoordinate={{type: 'REVEALED_WITH_BOMB_NEAR', bombCount: 1, coordinate: Coordinate.of({x: 0, y: 0})}} />)
     .add(`Game Coordinate - 2`, () => <GameCoordinateButton
         onMouseEnter={action('mouseEnter')}
+        onContextMenu={action('contextMenu')}
         onClick={action('clicked')}
         boardCoordinate={{type: 'REVEALED_WITH_BOMB_NEAR', bombCount: 2, coordinate: Coordinate.of({x: 0, y: 0})}} />)
     .add(`Game Coordinate - 3`, () => <GameCoordinateButton
         onMouseEnter={action('mouseEnter')}
+        onContextMenu={action('contextMenu')}
         onClick={action('clicked')}
         boardCoordinate={{type: 'REVEALED_WITH_BOMB_NEAR', bombCount: 3, coordinate: Coordinate.of({x: 0, y: 0})}} />)
     .add(`Game Coordinate - 4`, () => <GameCoordinateButton
         onMouseEnter={action('mouseEnter')}
+        onContextMenu={action('contextMenu')}
         onClick={action('clicked')}
         boardCoordinate={{type: 'REVEALED_WITH_BOMB_NEAR', bombCount: 4, coordinate: Coordinate.of({x: 0, y: 0})}} />)
     .add(`Game Coordinate - 5`, () => <GameCoordinateButton
         onMouseEnter={action('mouseEnter')}
+        onContextMenu={action('contextMenu')}
         onClick={action('clicked')}
         boardCoordinate={{type: 'REVEALED_WITH_BOMB_NEAR', bombCount: 5, coordinate: Coordinate.of({x: 0, y: 0})}} />)
     .add(`Game Coordinate - 6`, () => <GameCoordinateButton
         onMouseEnter={action('mouseEnter')}
+        onContextMenu={action('contextMenu')}
         onClick={action('clicked')}
         boardCoordinate={{type: 'REVEALED_WITH_BOMB_NEAR', bombCount: 6, coordinate: Coordinate.of({x: 0, y: 0})}} />)
     .add(`Game Coordinate - 7`, () => <GameCoordinateButton
         onMouseEnter={action('mouseEnter')}
+        onContextMenu={action('contextMenu')}
         onClick={action('clicked')}
         boardCoordinate={{type: 'REVEALED_WITH_BOMB_NEAR', bombCount: 7, coordinate: Coordinate.of({x: 0, y: 0})}} />)
     .add(`Game Coordinate - 8`, () => <GameCoordinateButton
         onMouseEnter={action('mouseEnter')}
+        onContextMenu={action('contextMenu')}
         onClick={action('clicked')}
         boardCoordinate={{type: 'REVEALED_WITH_BOMB_NEAR', bombCount: 8, coordinate: Coordinate.of({x: 0, y: 0})}} />);
 
