@@ -9,7 +9,7 @@ export class SweptAwayCoordinates {
             ? this.revealedCoordinates
             : [...this.revealedCoordinates, coordinate];
 
-        return new SweptAwayCoordinates(this.propagateReveal(revealedCoordinates, coordinate, board, 5))
+        return new SweptAwayCoordinates(SweptAwayCoordinates.propagateSweep(revealedCoordinates, board))
     }
 
     public isRevealed(coordinate: Coordinate) {
@@ -24,24 +24,25 @@ export class SweptAwayCoordinates {
         return (board.getHeight() * board.getWidth()) - this.revealedCoordinates.length;
     }
 
-    private propagateReveal(revealedCoordinate: Coordinate[], coordinate: Coordinate, board: Field, depth: number): Coordinate[] {
-        if (depth === 0) {
-            return revealedCoordinate;
+    private static propagateSweep(sweptCoordinates: Coordinate[], field: Field): Coordinate[] {
+        const wasSweep = (coordinate: Coordinate) => coordinate.isPresent(sweptCoordinates);
+
+        const afterAutoSweepCoordinates = field.coordinates()
+            .filter((coordinate: Coordinate) => {
+                if(wasSweep(coordinate)) {
+                    return true;
+                }
+
+                return coordinate.getAdjacent()
+                    .filter((adjacentCoordinate) => field.containsCoordinate(adjacentCoordinate))
+                    .filter((adjacentCoordinate) => adjacentCoordinate.isPresent(sweptCoordinates))
+                    .some((adjacentCoordinate) => !field.hasBombNear(adjacentCoordinate));
+        });
+
+        if (afterAutoSweepCoordinates.length !== sweptCoordinates.length) {
+            return SweptAwayCoordinates.propagateSweep(afterAutoSweepCoordinates, field);
         }
-        if (board.hasBombNear(coordinate)) {
-            return revealedCoordinate;
-        }
 
-        const nonBombCoordinates: Coordinate[] = coordinate.getAdjacent()
-            .filter((adjacentCoordinate) => board.containsCoordinate(adjacentCoordinate))
-            .filter((adjacentCoordinate) => !board.isBomb(adjacentCoordinate));
-
-        const nomBombNearCoordinates = nonBombCoordinates
-            .filter((nonBombCoordinate) => !board.hasBombNear(nonBombCoordinate))
-            .flatMap((nonBombCoordinates) => this.propagateReveal(revealedCoordinate, nonBombCoordinates, board, depth - 1));
-
-        return [...revealedCoordinate, ...nonBombCoordinates, ...nomBombNearCoordinates]
-            .reduce((coordinates: Coordinate[], coordinate: Coordinate) =>
-                coordinate.isPresent(coordinates) ? coordinates : [...coordinates, coordinate], []);
+        return afterAutoSweepCoordinates;
     }
 }

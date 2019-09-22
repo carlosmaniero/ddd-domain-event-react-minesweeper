@@ -39,6 +39,21 @@ export class Field {
             .length;
     }
 
+    public coordinates(): Coordinate[] {
+        const getCoordinates = (y: number) =>
+            range(this.getWidth()).map((x) => Coordinate.of({x, y}));
+
+        return range(this.getHeight())
+            .flatMap((y) => getCoordinates(y));
+    }
+
+    public containsCoordinate(coordinate: Coordinate) {
+        if (coordinate.y < 0 || coordinate.x < 0) {
+            return false;
+        }
+        return coordinate.y < this.getHeight() && coordinate.x < this.getWidth();
+    }
+
     private getAdjacent(coordinate: Coordinate): MineType[] {
         return coordinate.getAdjacent()
             .map((coordinate) => this.getByCoordinate(coordinate));
@@ -47,13 +62,6 @@ export class Field {
     private getByCoordinate(coordinate: Coordinate): MineType {
         let boardElement = this.board[coordinate.y];
         return boardElement ? boardElement[coordinate.x] : MineType.NotMine;
-    }
-
-    containsCoordinate(coordinate: Coordinate) {
-        if (coordinate.y < 0 || coordinate.x < 0) {
-            return false;
-        }
-        return coordinate.y < this.getHeight() && coordinate.x < this.getWidth();
     }
 }
 

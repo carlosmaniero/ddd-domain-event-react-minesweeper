@@ -41,7 +41,7 @@ describe('GameBoard', () => {
     it('revels the selected coordinate without bombs', () => {
         const eventPublisher = createEventHandler();
         const game = minesweeperFactory(eventPublisher, () => () => MineType.NotMine)(GameLevel.EASY);
-        const mineIndicator = new MineIndicator(eventPublisher)
+        const mineIndicator = new MineIndicator(eventPublisher);
         game.sweep(Coordinate.of({x: 5, y: 8}));
 
         const {queryByLabelText} = render(<GameBoard game={game} mineIndicator={mineIndicator} />);
