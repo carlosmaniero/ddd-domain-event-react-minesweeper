@@ -3,6 +3,7 @@ import {Coordinate} from "../coordinate/coordinate";
 
 export class MineIndicator {
     static events = {
+        created: eventCreator<MineIndicator>('MINE_INDICATOR_CREATED'),
         flagAdded: eventCreator<MineIndicator>('MINE_INDICATOR_ADDED'),
         flagRemoved: eventCreator<MineIndicator>('MINE_INDICATOR_REMOVED')
     };
@@ -36,6 +37,6 @@ export class MineIndicator {
     }
 
     public isFlagged(coordinate: Coordinate) {
-        return this.coordinates.some((addedCoordnate) => addedCoordnate.sameOf(coordinate));
+        return this.coordinates.some((addedCoordinate) => addedCoordinate.sameOf(coordinate));
     }
 }
