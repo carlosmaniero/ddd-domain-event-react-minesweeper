@@ -16,10 +16,16 @@ type BoardCoordinateWithNoBombNear = {
     coordinate: Coordinate
 };
 
+type BoardCoordinateFlagged = {
+    type: "FLAGGED",
+    coordinate: Coordinate
+};
+
 export type BoardCoordinate =
     BoardCoordinateNotRevealed
     | BoardCoordinateRevealedWithBombNear
-    | BoardCoordinateWithNoBombNear;
+    | BoardCoordinateWithNoBombNear
+    | BoardCoordinateFlagged;
 
 export const isRevealedWithNoBombNear = (boardCoordinate: BoardCoordinate): boardCoordinate is BoardCoordinateWithNoBombNear =>
     boardCoordinate.type === 'REVEALED_WITH_NO_BOMB_NEAR';
@@ -44,4 +50,9 @@ export const createRevealedCoordinateWithBombs = (coordinate: Coordinate, bombCo
     type: 'REVEALED_WITH_BOMB_NEAR',
     coordinate: coordinate,
     bombCount
+});
+
+export const createFlaggedCoordinate = (coordinate: Coordinate): BoardCoordinateFlagged => ({
+    type: "FLAGGED",
+    coordinate
 });

@@ -1,15 +1,19 @@
 import {Minesweeper} from "../../domain/minesweeper/minesweeper";
 import {Coordinate} from "../../domain/coordinate/coordinate";
 import {
-    BoardCoordinate,
+    BoardCoordinate, createFlaggedCoordinate,
     createNotRevealedCoordinate,
     createRevealedCoordinateWithBombs, createRevealedCoordinateWithoutBombs
 } from "./boardCoordinate";
+import {MineIndicator} from "../../domain/mineIndicator/MineIndicator";
 
 const range = (size: number) => Array.from({length: size}, (_, index) => index);
 
 export class FieldPresenter {
-    constructor(private readonly minesweeper: Minesweeper) { }
+    constructor(
+        private readonly minesweeper: Minesweeper,
+        private readonly mineIndicator?: MineIndicator
+    ) { }
 
     public boardCoordinates() {
         return range(this.boardTotalCoordinates())
@@ -29,6 +33,10 @@ export class FieldPresenter {
     }
 
     private boardCoordinate(coordinate: Coordinate): BoardCoordinate {
+        if (this.mineIndicator && this.mineIndicator.isFlagged(coordinate)) {
+            return createFlaggedCoordinate(coordinate)
+        }
+
         if (!this.minesweeper.isSwept(coordinate)) {
             return createNotRevealedCoordinate(coordinate);
         }

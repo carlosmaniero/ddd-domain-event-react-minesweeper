@@ -3,6 +3,7 @@ import {Coordinate} from "../../domain/coordinate/coordinate";
 import {GameLevel} from "../../domain/minesweeper/gameLevel";
 import {minesweeperFactory} from "../../domain/minesweeper/minesweeper";
 import {FieldPresenter} from "./FieldPresenter";
+import {MineIndicator} from "../../domain/mineIndicator/MineIndicator";
 
 describe('FieldPresenter', () => {
     const createGameWithMockedDependencies = () => {
@@ -47,6 +48,22 @@ describe('FieldPresenter', () => {
             type: 'REVEALED_WITH_BOMB_NEAR',
             coordinate: revealedCoordinate,
             bombCount: 8
+        });
+    });
+
+    it('returns flagged when flagged at mine indicator', () => {
+        const {createGame, mineFactory, publisher} = createGameWithMockedDependencies();
+        mineFactory.mockReturnValue(() => MineType.Mine);
+
+        const flaggedCoordinate = Coordinate.of({x: 1, y: 2});
+        const mineIndicator = new MineIndicator({publish: publisher}).toggleFlag(flaggedCoordinate);
+        const game = createGame(GameLevel.EASY);
+
+        const coordinate = new FieldPresenter(game, mineIndicator).boardCoordinates()[13];
+
+        expect(coordinate).toEqual({
+            type: 'FLAGGED',
+            coordinate: flaggedCoordinate,
         });
     });
 });
